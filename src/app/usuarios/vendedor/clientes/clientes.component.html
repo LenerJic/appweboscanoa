@@ -1,0 +1,160 @@
+<p-toast></p-toast>
+
+<div class="container-fluid px-4">
+  <h1 class="mt-4">Registro de Clientes</h1>
+  <!--? TOOLBAR -->
+  <div class="card">
+    <p-toolbar styleClass="mb-4 gap-2">
+        <div class="p-toolbar-group-start">
+            <p-button label="Nuevo" icon="pi pi-plus" styleClass="p-button-success mr-2" (click)="openNew()"></p-button>
+            <p-button label="PDF" icon="pi pi-file-pdf" styleClass="p-button-danger" (click)="exportPdf()"></p-button>
+        </div>
+        <div class="p-toolbar-group-end">
+            <p-button label="Actualizar" icon="pi pi-refresh" (onClick)="cargarData()"></p-button>
+        </div>
+    </p-toolbar>
+    <!--? END TOOLBAR -->
+    <!--TODO    TABLA -->
+    <p-table #dt [value]="clients" [rows]="10" [paginator]="true" [resizableColumns]="true"
+    [rowHover]="true" dataKey="id" [scrollable]="true" [showCurrentPageReport]="true"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} elementos"
+    [globalFilterFields]="['nombres','apellidoPat','apellidoMat','tipoDocumento','nroDocumento','direccion','correo','celular']"
+    *ngIf="clients; else table_error">
+    <ng-template pTemplate="caption">
+        <div class="flex align-items-center justify-content-between">
+            <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="dt.filterGlobal(getValue($event), 'contains')" placeholder="Buscar..." />
+            </span>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th pSortableColumn="nombres">Nombres<p-sortIcon field="nombres"></p-sortIcon></th>
+            <th pSortableColumn="apellidoPat">Apellido Paterno<p-sortIcon field="apellidoPat"></p-sortIcon></th>
+            <th pSortableColumn="apellidoMat">Apellido Materno<p-sortIcon field="apellidoMat"></p-sortIcon></th>
+            <th pSortableColumn="tipoDocumento">Tipo de Documento<p-sortIcon field="tipoDocumento"></p-sortIcon></th>
+            <th pSortableColumn="nroDocumento">Numero de Documento<p-sortIcon field="nroDocumento"></p-sortIcon></th>
+            <th pSortableColumn="direccion">Direccion<p-sortIcon field="direccion"></p-sortIcon></th>
+            <th pSortableColumn="correo">Correo<p-sortIcon field="correo"></p-sortIcon></th>
+            <th pSortableColumn="celular">Celular<p-sortIcon field="celular"></p-sortIcon></th>
+            <th>Acciones</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-client>
+        <tr>
+            <td>{{client.nombres}}</td>
+            <td>{{client.apellidoPat}}</td>
+            <td>{{client.apellidoMat}}</td>
+            <td>
+                <span *ngFor="let doc of lstdocumento">
+                    {{(client.tipoDocumento === doc.id) ? doc.nombre : ''}}
+                </span>
+            </td>
+            <td>{{client.nroDocumento}}</td>
+            <td>{{client.direccion}}</td>
+            <td>{{client.correo}}</td>
+            <td>{{client.celular}}</td>
+            <td>
+                <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2" (click)="editClient(client)"></button>
+                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger mr-2" (click)="deleteClient(client)"></button>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+        <div class="flex align-items-center justify-content-between">
+            En total son {{clients ? clients.length : 0 }} clientes.
+        </div>
+    </ng-template>
+  </p-table>
+  <ng-template #table_error>
+    <p-progressSpinner class="d-flex justify-content-center align-items-center mt-5"></p-progressSpinner>
+  </ng-template>
+  <!--TODO    END TABLA -->
+  </div>
+
+  
+</div>
+<!--? CREAR NUEVO -->
+<p-dialog [(visible)]="clientDialog" header="Cliente:" [breakpoints]="{'960px': '75vw'}"
+     [modal]="true" [style]="{width: '550px','overflow-y': 'auto'}" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <form [formGroup]="clienteForm">
+            <div class="field">
+                <label for="nombres">Nombres:</label>
+                <input type="text" pInputText id="nombres" autofocus formControlName="nombres"/>
+                <div *ngIf="nombres.invalid && (nombres.dirty || nombres.touched)">
+                    <small *ngIf="nombres.errors?.['required']" class="p-error">Nombre es requerido.</small>
+                </div>
+            </div>
+            <div class="field">
+                <label for="apellidoPat">Apellido Paterno:</label>
+                <input type="text" pInputText id="apellidoPat" formControlName="apellidoPat" />
+                <div *ngIf="apellidoPat.invalid && (apellidoPat.dirty || apellidoPat.touched)">
+                    <small *ngIf="apellidoPat.errors?.['required']" class="p-error">Apellido Paterno es requerido.</small>
+                </div>
+            </div>
+            <div class="field">
+                <label for="apellidoMat">Apellido Materno:</label>
+                <input type="text" pInputText id="apellidoMat" formControlName="apellidoMat" />
+                <div *ngIf="apellidoMat.invalid && (apellidoMat.dirty || apellidoMat.touched)">
+                    <small *ngIf="apellidoMat.errors?.['required']" class="p-error">Apellido Materno es requerido.</small>
+                </div>
+            </div>
+            <div class="field">
+                <label for="tipoDocumento">Tipo de Documento:</label>
+                <p-dropdown [options]="lstdocumento" placeholder="Seleccione tipo de Documento"
+                    [showClear]="true" formControlName="tipoDocumento" optionLabel="nombre" optionValue="id"></p-dropdown>
+                <div *ngIf="tipoDocumento.invalid && (tipoDocumento.dirty || tipoDocumento.touched)">
+                    <small *ngIf="tipoDocumento.errors?.['required']" class="p-error">Elija un tipo de Documento.</small>
+                </div>
+                <div *ngIf="(!tipoDocumento.touched && nroDocumento.touched) || (tipoDocumento.touched && tipoDocumento.value==0)">
+                    <small class="p-error">Elija un tipo de Documento.</small>
+                </div>
+            </div>
+            <div class="field">
+                <label for="nroDocumento">Numero de Documento:</label>
+                <input type="text" pInputText id="nroDocumento" pKeyFilter="pint" placeholder="Ingrese su numero de documento"
+                formControlName="nroDocumento" min="0" minlength="6" maxlength="12">                
+                <div *ngIf="nroDocumento.invalid && (nroDocumento.dirty || nroDocumento.touched)">
+                    <small *ngIf="nroDocumento.errors?.['required']" class="p-error">Su numero de documento es requerido</small>                    
+                </div>
+                <div *ngIf="validarDocumento(clienteForm)=='DNI_FALSE'">
+                    <small *ngIf="nroDocumento.dirty || nroDocumento.touched" class="p-error">Dni Invalido, el campo debe contener 8 dígitos</small>
+                </div>
+                <div *ngIf="validarDocumento(clienteForm)=='PAS_FALSE'">
+                    <small *ngIf="nroDocumento.dirty || nroDocumento.touched" class="p-error">Pasaporte Invalido, el campo debe contener 12 dígitos</small>
+                </div>
+            </div>
+            <div class="field">
+                <label for="direccion">Direccion:</label>
+                <input type="text" pInputText id="direccion" formControlName="direccion"/>
+                <div *ngIf="direccion.invalid && (direccion.dirty || direccion.touched)">
+                    <small *ngIf="direccion.errors?.['required']" class="p-error">Su Direccion es requerido.</small>
+                </div>
+            </div>
+            <div class="field">
+                <label for="correo">Correo Electrónico:</label>
+                <input type="text" pInputText id="correo" pKeyFilter="email" placeholder="ejemplo@gmail.com" formControlName="correo">                
+                <div *ngIf="correo.invalid && (correo.dirty || correo.touched)">
+                    <small *ngIf="correo.errors?.['required']" class="p-error">Su correo es requerido</small>              
+                    <small *ngIf="correo.errors?.['pattern']" class="p-error">Ingrese un correo valido</small>              
+                </div>
+            </div>
+            <div class="field">
+                <label for="celular">Celular:</label>
+                <input type="text" pInputText id="celular" pKeyFilter="int" formControlName="celular" minlength="9" maxlength="9">                
+                <div *ngIf="celular.invalid && (celular.dirty || celular.touched)">
+                    <small *ngIf="celular.errors?.['required']" class="p-error">Su numero de celular es requerido</small>                   
+                </div>
+            </div>
+        </form>
+    </ng-template>
+    <p-footer>
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text" [disabled]="!clienteForm.valid" (click)="saveClient()"></button>
+    </p-footer>
+</p-dialog>
+<!-- ? ---------- -->
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+<!--? ----------- -->

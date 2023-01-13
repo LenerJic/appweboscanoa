@@ -1,0 +1,177 @@
+<p-toast></p-toast>
+
+<div class="container-fluid px-4">
+  <h1 class="mt-4">Registro de Productos</h1>
+  
+  <div class="col-12">
+    <div class="card">
+      <p-toolbar styleClass="mb-4 gap-2">
+        <div class="p-toolbar-group-start">
+            <p-button label="Nuevo" icon="pi pi-plus" styleClass="p-button-success mr-2" (click)="openNew()"></p-button>
+            <p-button label="PDF" icon="pi pi-file-pdf" styleClass="p-button-danger" (click)="exportPdf()"></p-button>
+        </div>
+        <div class="p-toolbar-group-end">
+            <p-button label="Actualizar" icon="pi pi-refresh" (onClick)="cargarData()"></p-button>
+        </div>
+      </p-toolbar>
+    
+    <!--TODO    TABLA -->
+    <p-table #dt [value]="products" [rows]="10" [paginator]="true" [resizableColumns]="true"
+        [rowHover]="true" dataKey="id" [showCurrentPageReport]="true" [scrollable]="true"
+        [globalFilterFields]="['nombre','stock','categoria','precioCompra','precioVenta','estado','fecha']"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} elementos"
+        *ngIf="products; else table_error">
+      <ng-template pTemplate="caption">
+          <div class="flex align-items-center justify-content-between">
+              <span class="p-input-icon-left">
+                  <i class="pi pi-search"></i>
+                  <input pInputText type="text" (input)="dt.filterGlobal(getValue($event), 'contains')" placeholder="Buscar..." />
+              </span>
+          </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+          <tr>
+              <th pSortableColumn="nombre">Nombre <p-sortIcon field="nombre"></p-sortIcon></th>
+              <th pSortableColumn="descripcion">Descripcion <p-sortIcon field="descripcion"></p-sortIcon></th>
+              <th pSortableColumn="categoria">Categoria <p-sortIcon field="categoria"></p-sortIcon></th>
+              <th pSortableColumn="stock">Stock <p-sortIcon field="stock"></p-sortIcon></th>
+              <th pSortableColumn="precioCompra">Precio Compra <p-sortIcon field="precioCompra"></p-sortIcon></th>
+              <th pSortableColumn="precioVenta">Precio Venta <p-sortIcon field="precioVenta"></p-sortIcon></th>
+              <th pSortableColumn="estado">Estado<p-sortIcon field="estado"></p-sortIcon></th>
+              <th pSortableColumn="fecha">Fecha<p-sortIcon field="fecha"></p-sortIcon></th>
+              <th pSortableColumn="imagenUrl">Imagen<p-sortIcon field="imagenUrl"></p-sortIcon></th>
+              <th>Acciones</th>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-product>
+          <tr>
+              <td>{{product.nombre}}</td>
+              <td>{{product.descripcion}}</td>
+              <td>
+                  <span *ngFor="let catg of lstcategorias">
+                      {{(product.categoria === catg.id) ? catg.nombre : 'error o sin categoria'}}
+                  </span>
+              </td>
+              <td>{{product.stock}}</td>
+              <td>{{product.precioCompra | currency:'S/ '}}</td>
+              <td>{{product.precioVenta | currency:'S/ '}}</td>
+              <td>
+                <p-tag *ngIf="(product.estado && product.stock>= 10)" severity="success" value="Con Stock" [rounded]="true"></p-tag>
+                <p-tag *ngIf="(product.estado && product.stock < 10)" severity="warning" value="Bajo Stock" [rounded]="true"></p-tag>
+                <p-tag *ngIf="!product.estado" severity="danger" value="Sin Stock" [rounded]="true"></p-tag>
+              </td>
+              <td>{{product.fecha | date:'dd/MM/yyyy'}}</td>
+              <td>{{product.imagenUrl}}</td>
+              <td>
+                  <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2" (click)="editProduct(product)"></button>
+                  <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteProduct(product)"></button>
+              </td>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+          <div class="flex align-items-center justify-content-between">
+              En total son {{products ? products.length : 0 }} productos.
+          </div>
+      </ng-template>
+    </p-table>
+    <ng-template #table_error>
+      <p-progressSpinner class="d-flex justify-content-center align-items-center mt-5"></p-progressSpinner>
+    </ng-template>
+      <!--TODO    END TABLA -->
+    </div>
+  </div>
+
+  
+</div>
+<!--? CREAR NUEVO -->
+<p-dialog [(visible)]="productDialog" header="Producto:" [breakpoints]="{'960px': '90vw'}"
+ [modal]="true" [style]="{width: '550px','overflow-y': 'auto'}" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <form [formGroup]="productForm">
+            <div class="field">
+                <label for="nombre">Nombre</label>
+                <span class="p-input-icon-right">
+                    <i *ngIf="!nombre.valid && nombre.touched" class="pi pi-times-circle text-red-500"></i>
+                    <input type="text" pInputText id="nombre" autofocus formControlName="nombre"
+                    [ngClass]="{'ng-invalid ng-dirty': !nombre.valid && nombre.touched}"/>
+                </span>
+                <div *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)">
+                    <small *ngIf="nombre.errors?.['required']" class="p-error">Nombre es requerido.</small>
+                </div>
+            </div>
+            <div class="field">
+                <label for="descripcion">Descripcion</label>
+                <span class="p-input-icon-right">
+                    <textarea id="descripcion" pInputTextarea formControlName="descripcion" rows="2"
+                     cols="20" placeholder="Opcional"
+                     [ngClass]="{'ng-invalid ng-dirty': !descripcion.valid && descripcion.touched}"></textarea>
+                </span>
+                <div *ngIf="descripcion.invalid && (descripcion.dirty || descripcion.touched)">
+                    <small *ngIf="descripcion.errors?.['maxlength']" class="p-error">Se permite solo 250 caracteres como maximo</small>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col-12 md:col-6">
+                    <label for="categoria">Categoria</label>
+                    <p-dropdown [options]="lstcategorias" placeholder="Seleccione una Categoría"
+                        [showClear]="true" formControlName="categoria" optionLabel="nombre" optionValue="id"></p-dropdown>
+                    <div *ngIf="categoria.invalid && (categoria.dirty || categoria.touched)">
+                        <small *ngIf="categoria.errors?.['required']" class="p-error">Elija una Categoría.</small>
+                    </div>
+                    <div *ngIf="(!categoria.touched && categoria.value == 0 && productForm.valid) || (categoria.touched && categoria.value==0)">
+                        <small class="p-error">Elija una Categoría.</small>
+                    </div>
+                </div>
+                <div class="field col-12 md:col-6">
+                    <label for="stock">Stock</label>
+                    <p-inputNumber inputId="stock" mode="decimal" [showButtons]="true"
+                    [min]='0' formControlName="stock"></p-inputNumber>
+                    <div *ngIf="stock.invalid && (stock.dirty || stock.touched)">
+                        <small *ngIf="stock.errors?.['required']" class="p-error">Ingrese una cantidad.</small>
+                    </div>
+                </div>
+                <div class="field col-12 md:col-6">
+                    <label for="precioCompra">Precio de Compra</label>
+                    <p-inputNumber inputId="precioCompra" [showButtons]="true"
+                    buttonLayout="horizontal" spinnerMode="horizontal" [step]="0.50" [min]="0"
+                    decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" incrementButtonIcon="pi pi-plus"
+                    decrementButtonIcon="pi pi-minus" mode="currency" currency="PEN" locale="es-PE" formControlName="precioCompra">
+                    </p-inputNumber>
+                    <div *ngIf="precioCompra.invalid && (precioCompra.dirty || precioCompra.touched)">
+                        <small *ngIf="precioCompra.errors?.['required']" class="p-error">Ingrese el Precio de Compra.</small>
+                    </div>
+                </div>
+                <div class="field col-12 md:col-6">
+                    <label for="precioVenta">Precio de Venta</label>
+                    <p-inputNumber inputId="precioVenta" [showButtons]="true" buttonLayout="horizontal"
+                    spinnerMode="horizontal" [step]="0.50" [min]="precioCompra.value" decrementButtonClass="p-button-danger"
+                    incrementButtonClass="p-button-success" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                    mode="currency" currency="PEN" locale="es-PE" formControlName="precioVenta">
+                    </p-inputNumber>
+                    <div *ngIf="precioVenta.invalid && (precioVenta.dirty || precioVenta.touched)">
+                        <small *ngIf="precioVenta.errors?.['required']" class="p-error">Ingrese el Precio de Venta.</small>
+                    </div>
+                    <div *ngIf="(!precioVenta.touched && precioVenta.value < precioCompra.value && productForm.valid)">
+                        <small class="p-error">El precio de venta no debe ser menor que el de Compra.</small>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <label for="fecha">Fecha de Registro</label>
+                <p-calendar inputId="fecha" dateFormat="dd/mm/yy" [showIcon]="true" formControlName="fecha" placeholder="Agregue una fecha"
+                [ngClass]="{'ng-invalid ng-dirty': !fecha.valid && fecha.touched}"></p-calendar>
+                <div *ngIf="fecha.invalid && (fecha.dirty || fecha.touched) || (fecha.touched && fecha.value=='')">
+                    <small *ngIf="fecha.errors?.['required']" class="p-error">Seleccione una fecha.</small>
+                </div>
+            </div>
+        </form>
+    </ng-template>
+    <p-footer>
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text" (click)="hideDialog()"></button>
+        <button #btn_save pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text" (click)="saveProduct()"
+        [disabled]="!productForm.valid || categoria.value==0 || precioVenta.value < precioCompra.value"></button>
+    </p-footer>
+</p-dialog>
+<!-- ? ---------- -->
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+<!--? ----------- -->

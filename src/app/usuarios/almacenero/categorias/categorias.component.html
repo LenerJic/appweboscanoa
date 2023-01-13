@@ -1,0 +1,85 @@
+<p-toast></p-toast>
+<div class="container-fluid px-4">
+  <h1 class="mt-4">Lista de Categorías</h1>
+  <div class="col-12">
+    <div class="card">
+        <p-toolbar styleClass="mb-4 gap-2">
+            <div class="p-toolbar-group-start">
+                <p-button label="Nuevo" icon="pi pi-plus" styleClass="p-button-success mr-2" (click)="openNew()"></p-button>
+                <p-button label="PDF" icon="pi pi-file-pdf" styleClass="p-button-danger" (click)="exportPdf()"></p-button>
+            </div>
+            <div class="p-toolbar-group-end">
+                <p-button label="Actualizar" icon="pi pi-refresh" (onClick)="cargarData()"></p-button>
+            </div>
+        </p-toolbar>
+      <!--TODO    TABLA -->
+      <p-table #dt [value]="categories" [rows]="10" [paginator]="true" [resizableColumns]="true"
+            [rowHover]="true" dataKey="id" [scrollable]="true" [showCurrentPageReport]="true"
+            [globalFilterFields]="['nombre']"
+            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} elementos"
+            *ngIf="categories; else table_error">
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="dt.filterGlobal(getValue($event), 'contains')" placeholder="Buscar..." />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="id">Id <p-sortIcon field="id"></p-sortIcon></th>
+                        <th pSortableColumn="nombre">Nombre <p-sortIcon field="nombre"></p-sortIcon></th>
+                        <th>Acciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-category>
+                    <tr>
+                        <td>{{category.id}}</td>
+                        <td>{{category.nombre}}</td>
+                        <td>
+                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2" (click)="editCategory(category)"></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteCategory(category)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        En total son {{categories ? categories.length : 0 }} categorias.
+                    </div>
+                </ng-template>
+      </p-table>
+      <ng-template #table_error>
+        <p-progressSpinner class="d-flex justify-content-center align-items-center mt-5"></p-progressSpinner>
+      </ng-template>
+      <!--TODO    END TABLA -->
+    </div>
+  </div>
+</div>
+<!--? ------------------------- -->
+<p-dialog [(visible)]="categoryDialog" header="Categoria:" [breakpoints]="{'960px': '90vw'}"
+ [modal]="true" [style]="{width: '550px','overflow-y': 'auto'}" styleClass="p-fluid">   
+    <ng-template pTemplate="content">
+        <form [formGroup]="categoryForm">
+            <div class="field mt-4">
+                <span class="p-float-label p-input-icon-right">
+                    <i class="pi"
+                    [ngClass]="{'pi-check text-green-500': nombre.valid,
+                                'pi-times-circle text-red-500': !nombre.valid && nombre.touched}"></i>
+                    <input pInputText id="nombre" type="text" formControlName="nombre" autofocus
+                    [ngClass]="{'border-green-400': nombre.valid, 'ng-invalid ng-dirty': !nombre.valid && nombre.touched}"> 
+                    <label for="nombre">Nombre:</label>
+                </span>
+                <div *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)">
+                    <small *ngIf="nombre.errors?.['required']" class="p-error">Nombre es requerido.</small>
+                </div>
+            </div>
+        </form>
+    </ng-template>
+    <p-footer>
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text" [disabled]="!categoryForm.valid" (click)="saveCategory()"></button>
+    </p-footer>
+</p-dialog>
+<!--? -------------------------- -->
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

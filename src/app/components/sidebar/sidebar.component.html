@@ -1,0 +1,71 @@
+<div id="layoutSidenav_nav">
+  <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+    <div class="sb-sidenav-menu">
+      <div class="nav">
+        <div class="sb-sidenav-menu-heading">Inicio</div>
+        <a class="nav-link" [routerLink]="['home']" [routerLinkActive]="'active'">
+          <div class="sb-nav-link-icon"><i class="pi pi-home"></i></div>
+          Dashboard
+        </a>
+        <div *ngIf="rolUsuario == 'administrador'">
+          <div class="sb-sidenav-menu-heading">Administración</div>
+          <div *ngFor="let data of navData">
+            <a class="nav-link" [routerLink]="[data.routerLink]" [routerLinkActive]="'active'">
+              <div class="sb-nav-link-icon"><i [class]="data.icon"></i></div>
+              {{ data.label }}
+            </a>
+          </div>
+        </div>
+        <div *ngIf="rolUsuario == 'administrador' || rolUsuario == 'almacenero'">
+          <div class="sb-sidenav-menu-heading">Inventario</div>
+          <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseInventory"
+          aria-expanded="false" aria-controls="collapseLayouts">
+            <i class="pi pi-inbox sb-nav-link-icon"></i> Proceso de Almacen
+            <div class="sb-sidenav-collapse-arrow">
+              <i class="pi pi-angle-down"></i>
+            </div>
+          </a>
+          <div class="collapse" id="collapseInventory" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+            <nav class="sb-sidenav-menu-nested nav">
+              <div *ngFor="let inventory of navAlmacen">
+                <!-- <a class="nav-link" routerLink="{{ inventory.routerLink }}"> -->
+                <a class="nav-link" [routerLink]="[inventory.routerLink]" [routerLinkActive]="'active'">
+                  <div class="sb-nav-link-icon">
+                    <i [class]="inventory.icon"></i>
+                  </div>
+                  {{ inventory.label }}
+                </a>
+              </div>
+            </nav>
+          </div>
+        </div>
+        <div *ngIf="rolUsuario == 'administrador' || rolUsuario == 'vendedor'">
+          <div class="sb-sidenav-menu-heading">Ventas</div>
+          <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseSale"
+            aria-expanded="false" aria-controls="collapseLayouts">
+            <i class="pi pi-dollar sb-nav-link-icon"></i> Proceso de Ventas
+            <div class="sb-sidenav-collapse-arrow">
+              <i class="pi pi-angle-down"></i>
+            </div>
+          </a>
+          <div class="collapse" id="collapseSale" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+            <nav class="sb-sidenav-menu-nested nav">
+              <div *ngFor="let sale of navVendedor">
+                <a class="nav-link" [routerLink]="[sale.routerLink]" [routerLinkActive]="'active'">
+                  <div class="sb-nav-link-icon">
+                    <i [class]="sale.icon"></i>
+                  </div>
+                  {{ sale.label }}
+                </a>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sb-sidenav-footer" *ngIf="auth.isAutenticado">
+      <div class="small">Bienvenido:</div>
+      {{ auth.getUsername }}
+    </div>
+  </nav>
+</div>

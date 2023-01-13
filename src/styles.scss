@@ -1,1 +1,15 @@
-/* You can add global styles to this file, and also import other style files */
+$font-family_1: var(--font-family);
+$color_page: #eff3f8;
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+body {
+	font-family: $font-family_1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	position: relative;
+	background-color: $color_page;
+}
