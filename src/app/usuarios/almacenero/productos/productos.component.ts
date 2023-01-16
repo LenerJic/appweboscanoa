@@ -28,15 +28,14 @@ export class ProductosComponent implements OnInit {
               private confirmationService: ConfirmationService,
               private exportarPdf: ExportarPdfService,
               private fb: FormBuilder,
-              private pd:DatePipe) 
-    { 
-      this.categoryservice.getCategories().subscribe((data: any) => {
-        this.lstcategorias = data.result;  
-      });
-    }
+              private pd:DatePipe) { }
 
   ngOnInit(): void {
-    this.cargarData();    
+    this.categoryservice.getCategories().subscribe((data: any) => {
+      this.lstcategorias = data.result;
+      this.cargarData();
+    });
+
     this.productForm = this.fb.group({  
       id: [0],
       nombre: ['',[Validators.required]],
@@ -200,7 +199,7 @@ export class ProductosComponent implements OnInit {
             obj.id,
             obj.nombre,
             obj.descripcion,
-            obj.categoria,
+            this.lstcategorias.find((categoria:any)=>categoria.id === obj.categoria)?.nombre ?? 'Categoria no registrado',
             obj.stock,
             obj.precioCompra,
             obj.precioVenta,
@@ -212,5 +211,11 @@ export class ProductosComponent implements OnInit {
       )
       this.exportarPdf.imprimir(encabezado, cuerpo, titulo, true);
     });
+  }
+
+  getNmaeCategoria(id){
+    this.categoryservice.getCategory(id).subscribe((data:any) => {
+
+    })
   }
 }

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './auth/login/login.component';
+import { UserFormComponent } from './auth/user-form/user-form.component';
 import { AdminGuard } from './guards/admin.guard';
 import { AlmaceneroGuard } from './guards/almacenero.guard';
 import { VendedorGuard } from './guards/vendedor.guard';
@@ -10,6 +11,7 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 const routes: Routes = [
   { path:'', component:LoginComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'changePassword', component: UserFormComponent },
   { path: 'not-found', component: NotFoundComponent },
   { path: 'not-allowed', component: NotAllowedComponent },
   {

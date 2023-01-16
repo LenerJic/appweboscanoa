@@ -23,6 +23,8 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { NotAllowedComponent } from './pages/not-allowed/not-allowed.component';
 
 import { HomeComponent } from './pages/home/home.component';
+import { UserFormComponent } from './auth/user-form/user-form.component';
+import { MessageService } from 'primeng/api';
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,6 +36,7 @@ import { HomeComponent } from './pages/home/home.component';
     NotFoundComponent,
     NotAllowedComponent,
     HomeComponent,
+    UserFormComponent,
   ],
   imports: [
     HttpClientModule,
@@ -50,7 +53,8 @@ import { HomeComponent } from './pages/home/home.component';
     RippleModule
   ],
   providers: [
-    AuthService
+    AuthService,
+    MessageService
   ],
   bootstrap: [AppComponent]
 })

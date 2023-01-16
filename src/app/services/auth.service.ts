@@ -20,6 +20,9 @@ export class AuthService {
   login(user: UserI){
     return this.http.post(this.apiUrl+'Login',user);
   }
+  changePassword(user: UserI){
+    return this.http.put(this.apiUrl+user.userName, user);
+  }
 
   logout(){
     /* localStorage.removeItem('userName');

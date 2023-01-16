@@ -23,15 +23,13 @@ export class ClientesComponent implements OnInit {
               private documentservice: DocumentoService,
               private messageService: MessageService,
               private confirmationService: ConfirmationService,
-              private fb: FormBuilder) 
-              { 
-                this.documentservice.getDocument().subscribe((data: any) => {
-                  this.lstdocumento = data.result;               
-                });
-              }
+              private fb: FormBuilder) { }
 
   ngOnInit(): void {
-    this.cargarData();
+    this.documentservice.getDocument().subscribe((data: any) => {
+      this.lstdocumento = data.result;
+      this.cargarData();            
+    });
     this.clienteForm = this.fb.group({
       id: [0],
       nombres: ['',Validators.required],

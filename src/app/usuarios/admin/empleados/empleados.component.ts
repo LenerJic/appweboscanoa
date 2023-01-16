@@ -31,26 +31,18 @@ export class EmpleadosComponent implements OnInit{
               private confirmationService: ConfirmationService,
               private exportarPdf: ExportarPdfService,
               private fb: FormBuilder,
-              private pd: DatePipe)
-              {
-                this.documentservice.getDocument().subscribe((data: any) => {
-                  this.lstdocumento = data.result;             
-                });
-
-                this.roles = [
-                  {id: 1, nombre: 'Administrador'},
-                  {id: 2, nombre: 'Almacenero'},
-                  {id: 3, nombre: 'Vendedor'}
-                ];
-
-                this.registerUser = this.fb.group({
-                  userName: [''],
-                  password: ['']
-                });
-              }
+              private pd: DatePipe) { }
 
   ngOnInit(): void {
-    this.cargarData();
+    this.roles = [
+      {id: 1, nombre: 'Administrador'},
+      {id: 2, nombre: 'Almacenero'},
+      {id: 3, nombre: 'Vendedor'}
+    ];
+    this.documentservice.getDocument().subscribe((data: any) => {
+      this.lstdocumento = data.result;             
+      this.cargarData();
+    });
     this.empleadoForm = this.fb.group({
       id: [0],
       nombres: ['',Validators.required],
@@ -65,7 +57,10 @@ export class EmpleadosComponent implements OnInit{
       estado: [Boolean],
       tipoEmpleado: ['',Validators.required]
     });
-    
+    this.registerUser = this.fb.group({
+      userName: [''],
+      password: ['']
+    });
   }
 
 //* #region getNamesForm
