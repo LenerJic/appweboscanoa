@@ -1,1 +1,47 @@
-<p>venta works!</p>
+<p-toast></p-toast>
+<div class="container-fluid p-4">
+    <div class="surface-card p-4 shadow-2 border-round border-solid border-primary-400">
+        <div class="field grid">
+            <div class="col-fixed text-3xl font-medium text-900 mb-3">Datos del Cliente</div>
+            <div class="col">
+                <p-button label="Otro Cliente" icon="pi pi-user-edit" (onClick)="datosCliente(true)"
+                 styleClass="p-button-sm p-button-warning"></p-button>
+            </div>
+        </div>
+        <div class="p-fluid grid">
+            <div class="field col-12 md:col-4">
+                <label for="filtro" class="text-base font-medium text-600">N° de documento:</label>
+                <p-autoComplete id="filtro" [(ngModel)]="selectedClient" [showEmptyMessage]="true" [suggestions]="filteredClientes"
+                 (completeMethod)="filterClient($event)" field="nroDocumento" [minLength]="1" (onSelect)="datosCliente()"
+                 placeholder="Ingrese el documento del cliente"></p-autoComplete>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label for="c_nombre" class="text-base font-medium text-600">Nombres:</label>
+                <input id="c_nombre" type="text" pInputText [(ngModel)]="nameCliente" [disabled]="true">
+            </div>
+            <div class="field col-12 md:col-4">
+                <label for="c_apellidos" class="text-base font-medium text-600">Apellidos:</label>
+                <input id="c_apellidos" type="text" pInputText [(ngModel)]="surnamesCliente" [disabled]="true">
+            </div>
+            <div class="field col-12 md:col-4">
+                <label for="c_correo" class="text-base font-medium text-600">Correo:</label>
+                <input id="c_correo" type="text" pInputText [(ngModel)]="correoCliente" [disabled]="true">
+            </div>
+            <div class="field col-12 md:col-4">
+                <label for="c_celular" class="text-base font-medium text-600">Celular:</label>
+                <input id="c_celular" type="text" pInputText [(ngModel)]="celCliente" [disabled]="true">
+            </div>
+            <div class="field col-12 md:col-4">
+                <label for="c_direccion" class="text-base font-medium text-600">Dirección:</label>
+                <input id="c_direccion" type="text" pInputText [(ngModel)]="dirCliente" [disabled]="true">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid px-4 pb-4">
+    <div class="surface-card p-4 shadow-2 border-round">
+        <div class="text-3xl font-medium text-900 mb-3">Datos de la Venta</div>
+        <div class="font-medium text-500 mb-3">Vivamus id nisl interdum, blandit augue sit amet, eleifend mi.</div>
+        <div style="height: 150px" class="border-2 border-dashed surface-border"></div>
+    </div>
+</div>
