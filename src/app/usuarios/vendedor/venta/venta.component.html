@@ -1,13 +1,13 @@
 <p-toast></p-toast>
-<div class="container-fluid p-4">
-    <div class="surface-card p-4 shadow-2 border-round border-solid border-primary-400">
-        <div class="field grid">
-            <div class="col-fixed text-3xl font-medium text-900 mb-3">Datos del Cliente</div>
-            <div class="col">
+<div class="container-fluid px-4 my-3">
+    <p-panel [toggleable]="true">
+        <ng-template pTemplate="header">
+            <div class="formgroup-inline">
+                <div class="text-3xl font-medium text-900 mr-4">Datos del Cliente</div>
                 <p-button label="Otro Cliente" icon="pi pi-user-edit" (onClick)="datosCliente(true)"
-                 styleClass="p-button-sm p-button-warning"></p-button>
+                    styleClass="p-button-sm p-button-warning"></p-button>
             </div>
-        </div>
+        </ng-template>
         <div class="p-fluid grid">
             <div class="field col-12 md:col-4">
                 <label for="filtro" class="text-base font-medium text-600">N° de documento:</label>
@@ -17,31 +17,104 @@
             </div>
             <div class="field col-12 md:col-4">
                 <label for="c_nombre" class="text-base font-medium text-600">Nombres:</label>
-                <input id="c_nombre" type="text" pInputText [(ngModel)]="nameCliente" [disabled]="true">
+                <input id="c_nombre" type="text" pInputText [(ngModel)]="dataCliente.nombres" [disabled]="true">
             </div>
             <div class="field col-12 md:col-4">
                 <label for="c_apellidos" class="text-base font-medium text-600">Apellidos:</label>
-                <input id="c_apellidos" type="text" pInputText [(ngModel)]="surnamesCliente" [disabled]="true">
+                <input id="c_apellidos" type="text" pInputText [(ngModel)]="dataCliente.apellidoPat + ' ' + dataCliente.apellidoMat" [disabled]="true">
             </div>
             <div class="field col-12 md:col-4">
                 <label for="c_correo" class="text-base font-medium text-600">Correo:</label>
-                <input id="c_correo" type="text" pInputText [(ngModel)]="correoCliente" [disabled]="true">
+                <input id="c_correo" type="text" pInputText [(ngModel)]="dataCliente.correo" [disabled]="true">
             </div>
             <div class="field col-12 md:col-4">
                 <label for="c_celular" class="text-base font-medium text-600">Celular:</label>
-                <input id="c_celular" type="text" pInputText [(ngModel)]="celCliente" [disabled]="true">
+                <input id="c_celular" type="text" pInputText [(ngModel)]="dataCliente.celular" [disabled]="true">
             </div>
             <div class="field col-12 md:col-4">
                 <label for="c_direccion" class="text-base font-medium text-600">Dirección:</label>
-                <input id="c_direccion" type="text" pInputText [(ngModel)]="dirCliente" [disabled]="true">
+                <input id="c_direccion" type="text" pInputText [(ngModel)]="dataCliente.direccion" [disabled]="true">
             </div>
         </div>
-    </div>
+    </p-panel>
 </div>
-<div class="container-fluid px-4 pb-4">
+<div *ngIf="procederVenta" class="container-fluid px-4 pb-4 scalein animation-duration-500 animation-iteration-1 ">
     <div class="surface-card p-4 shadow-2 border-round">
-        <div class="text-3xl font-medium text-900 mb-3">Datos de la Venta</div>
-        <div class="font-medium text-500 mb-3">Vivamus id nisl interdum, blandit augue sit amet, eleifend mi.</div>
-        <div style="height: 150px" class="border-2 border-dashed surface-border"></div>
+        <div class="text-3xl font-medium text-900  mb-3">Datos de la Venta</div>
+        <div class="grid">
+            <div class="col-6">
+                <div class="font-medium text-500  m-1">
+                    <i class="pi pi-user font-bold mr-2"></i>
+                    Vendedor: {{authService.getUsername}}
+                </div>
+            </div>
+            <div class="col-6">
+                <p-button label="Buscar" icon="pi pi-search" (onClick)="showProducts()"
+                 styleClass="p-button-sm p-button-success mr-2 mb-2"></p-button>
+                <p-button label="Guardar" icon="pi pi-save" styleClass="p-button-sm mr-2 mb-2"></p-button>
+                <p-button label="Anular" icon="pi pi-times-circle" styleClass="p-button-sm p-button-danger mb-2"></p-button>
+            </div>
+        </div>
+        <div class="surface-card mt-2 mb-4">
+            <div class="surface-500 border-round p-2">
+                <form [formGroup]="oneProduct" (ngSubmit)="inserintable()">
+                    <div class="formgroup-inline justify-content-center">
+                        <div class="col-12 md:col">
+                            <label for="f_cantidad" class="text-100 font-medium">Cantidad</label><br>
+                            <p-inputNumber formControlName="cantidad" mode="decimal" [showButtons]="true"
+                             inputId="f_cantidad" [min]="1" [max]="100" [readonly]="btnelegido"></p-inputNumber>
+                        </div>
+                        <div class="col-12 md:col">
+                            <label for="f_producto" class="text-100 font-medium">Producto</label><br>
+                            <input type="text" pInputText id="f_producto" [readonly]="true" formControlName="producto" class="w-full" >
+                        </div>
+                        <div class="col-12 md:col">
+                            <label for="f_pUnit" class="text-100 font-medium">P. Unit.</label><br>
+                            <input type="text" pInputText id="f_pUnit" [readonly]="true" formControlName="pUnit" class="w-full">
+                        </div>
+                        <div class="col-12 md:col">
+                            <label for="f_pTotal" class="text-100 font-medium">P. Total</label>
+                            <input type="text" pInputText id="f_pTotal" [readonly]="true" formControlName="pTotal" class="w-full">
+                        </div>
+                        <div class="col-12 md:col">
+                            <label for="b_insert" class="text-100 font-medium">Accion</label><br>
+                            <p-button id="b_insert" icon="pi pi-plus" label="Agregar" type="ngSubmit" [disabled]="btnelegido"></p-button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    <!-- ? --------------------------------------- -->
+        <p-table [value]="tablaproducto">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Cantidad</th>
+                    <th>Producto</th>
+                    <th>P. Unit.</th>
+                    <th>Sub Total</th>
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-prod>
+                <tr>
+                    <td>{{prod.cantidad}}</td>
+                    <td>{{prod.producto}}</td>
+                    <td>{{prod.pUnit | currency:'S/ '}}</td>
+                    <td>{{prod.pTotal | currency:'S/ '}}</td>
+                    <td>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteProduct(prod)"></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        
     </div>
 </div>
+
+<!--! ACTUALIZAR LA API
+    
+    Agregar un filtro en la tabla de seleccion
+    colores a la venta
+    agregar o no el 'limpiar' producto seleccionado
+    
+ -->

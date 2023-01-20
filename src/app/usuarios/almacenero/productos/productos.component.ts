@@ -44,7 +44,7 @@ export class ProductosComponent implements OnInit {
       categoria: [0,Validators.required],
       precioCompra: [0,Validators.required],
       precioVenta: [0,Validators.required],
-      estado: [Boolean],
+      estado: [false],
       fecha: ['',Validators.required]
     });    
   }
@@ -75,7 +75,7 @@ export class ProductosComponent implements OnInit {
       categoria: [0,Validators.required],
       precioCompra: [0,Validators.required],
       precioVenta: [0,Validators.required],
-      estado: [true],
+      estado: [false],
       fecha: ['',Validators.required]
     });
     this.productDialog = true;

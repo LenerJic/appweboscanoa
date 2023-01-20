@@ -48,7 +48,7 @@
               <td>{{product.descripcion}}</td>
               <td>
                   <span *ngFor="let catg of lstcategorias">
-                      {{(product.categoria === catg.id) ? catg.nombre : 'error o sin categoria'}}
+                      {{(product.categoria === catg.id) ? catg.nombre : ''}}
                   </span>
               </td>
               <td>{{product.stock}}</td>
@@ -60,8 +60,15 @@
                 <p-tag *ngIf="!product.estado" severity="danger" value="Sin Stock" [rounded]="true"></p-tag>
               </td>
               <td>{{product.fecha | date:'dd/MM/yyyy'}}</td>
-              <td>{{product.imagenUrl}}</td>
+              <!-- <td *ngIf="product.imagenes[0] == null">
+                Sin Imagen
+              </td>
+              <td *ngIf="product.imagenes[0] !== null">
+                <img [src]="'https://apimueblesoscanoa.azurewebsites.net' +product.imagenes[0]" width="100" class="shadow-4" />
+              </td> -->
+              <td>{{(product.imagenes[0]!== null) ? 'Con Imagen' : 'Sin Imagen'}}</td>
               <td>
+                  <button pButton pRipple icon="pi pi-info-circle" class="p-button-rounded mr-2" [routerLink]="['detail',product.id]"></button>
                   <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2" (click)="editProduct(product)"></button>
                   <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteProduct(product)"></button>
               </td>
@@ -89,7 +96,7 @@
                 <label for="nombre">Nombre</label>
                 <span class="p-input-icon-right">
                     <i *ngIf="!nombre.valid && nombre.touched" class="pi pi-times-circle text-red-500"></i>
-                    <input type="text" pInputText id="nombre" autofocus formControlName="nombre"
+                    <input type="text" pInputText id="nombre" [autofocus]="true" formControlName="nombre"
                     [ngClass]="{'ng-invalid ng-dirty': !nombre.valid && nombre.touched}"/>
                 </span>
                 <div *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)">
@@ -172,3 +179,7 @@
 <!-- ? ---------- -->
 <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
 <!--? ----------- -->
+<p-dialog [(visible)]="productDialog" header="Producto:" [breakpoints]="{'960px': '90vw'}"
+ [modal]="true" [style]="{width: '550px','overflow-y': 'auto'}" styleClass="p-fluid">
+    <app-details-product></app-details-product>
+</p-dialog>

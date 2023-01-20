@@ -5,6 +5,7 @@ import { LayoutComponent } from 'src/app/layout/layout.component';
 import { HomeComponent } from 'src/app/pages/home/home.component';
 import { AlmaceneroModule } from '../almacenero/almacenero.module';
 import { CategoriasComponent } from '../almacenero/categorias/categorias.component';
+import { DetailsProductComponent } from '../almacenero/details-product/details-product.component';
 import { ProductosComponent } from '../almacenero/productos/productos.component';
 import { ClientesComponent } from '../vendedor/clientes/clientes.component';
 import { VendedorModule } from '../vendedor/vendedor.module';
@@ -22,6 +23,7 @@ const routes: Routes = [
       { path: 'clientes', component: ClientesComponent },
       { path: 'categorias', component: CategoriasComponent },
       { path: 'productos', component: ProductosComponent },
+      { path: 'productos/detail/:id', component: HomeComponent },
       { path: 'venta', component: VentaComponent },
       { path: '**', redirectTo: 'not-found', pathMatch: 'full' }
       /* {

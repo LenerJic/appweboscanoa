@@ -16,6 +16,8 @@ import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { PanelModule } from 'primeng/panel';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
 
 import { ClienteService } from 'src/app/services/cliente.service';
 import { DocumentoService } from 'src/app/services/documento.service';
@@ -47,7 +49,9 @@ registerLocaleData(localePy, 'es');
     DialogModule,
     ConfirmDialogModule,
     ProgressSpinnerModule,
-    AutoCompleteModule
+    AutoCompleteModule,
+    PanelModule,
+    DynamicDialogModule
   ],
   exports:[
     ClientesComponent,

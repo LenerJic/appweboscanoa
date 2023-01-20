@@ -27,13 +27,15 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ExportarPdfService } from 'src/app/services/exportar-pdf.service';
 
 // Date Import
-import localePy from '@angular/common/locales/es-PE'
+import localePy from '@angular/common/locales/es-PE';
+import { DetailsProductComponent } from './details-product/details-product.component'
 registerLocaleData(localePy, 'es');
 
 @NgModule({
   declarations: [
     CategoriasComponent,
     ProductosComponent,
+    DetailsProductComponent,
   ],
   imports: [
     CommonModule,
@@ -57,7 +59,8 @@ registerLocaleData(localePy, 'es');
   ],
   exports:[
     CategoriasComponent,
-    ProductosComponent
+    ProductosComponent,
+    DetailsProductComponent
   ],
   providers: [
     ProductoService,

@@ -10,7 +10,7 @@ export interface ProductImgI {
     precioVenta?: number;
     estado?: boolean;
     fecha?: Date;
-    imagenUrl?: Array<string>;
+    imagenes?: Array<string>;
 }
 
 export interface ProductI {

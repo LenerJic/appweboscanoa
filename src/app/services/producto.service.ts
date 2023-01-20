@@ -21,6 +21,14 @@ export class ProductoService {
     });
     return this.http.get<ProductImgI[]>(this.apiUrl, {headers: headers});
   }
+  getProduct(id: number):Observable<ProductImgI[]>{
+    let auth_token = localStorage.getItem('token_value');
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${auth_token}`
+    });
+    return this.http.get<ProductImgI[]>(this.apiUrl + id, {headers: headers});
+  }
   createProduct(product: ProductI):Observable<ProductI>{
     let auth_token = localStorage.getItem('token_value');
     const headers = new HttpHeaders({
