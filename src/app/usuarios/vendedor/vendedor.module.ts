@@ -18,6 +18,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { PanelModule } from 'primeng/panel';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { NgxPrintModule } from 'ngx-print';
 
 import { ClienteService } from 'src/app/services/cliente.service';
 import { DocumentoService } from 'src/app/services/documento.service';
@@ -26,12 +27,14 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 // Date Import
 import localePy from '@angular/common/locales/es-PE';
 import { VentaComponent } from './venta/venta.component';
+import { BoletaVentaComponent } from './boleta-venta/boleta-venta.component';
 registerLocaleData(localePy, 'es');
 
 @NgModule({
   declarations: [
     ClientesComponent,
-    VentaComponent
+    VentaComponent,
+    BoletaVentaComponent
   ],
   imports: [
     CommonModule,
@@ -51,7 +54,8 @@ registerLocaleData(localePy, 'es');
     ProgressSpinnerModule,
     AutoCompleteModule,
     PanelModule,
-    DynamicDialogModule
+    DynamicDialogModule,
+    NgxPrintModule,
   ],
   exports:[
     ClientesComponent,

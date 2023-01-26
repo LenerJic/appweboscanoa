@@ -21,22 +21,21 @@ export class ImagenService {
     });
     return this.http.get<ImagenI[]>(this.apiUrl, {headers: headers});
   }
-  /* getImageforProduct():Observable<ImagenI[]>{
+  getImage(id: number): Observable<{}>{
     let auth_token = localStorage.getItem('token_value');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${auth_token}`
     });
-    return this.http.get<ImagenI[]>(this.apiUrl + 'idProducto', {headers: headers});
-  } */
-
-  createImage(id: number,imagen: ImagenI): Observable<ImagenI>{
-    let auth_token = localStorage.getItem('token_value');
+    return this.http.get(this.apiUrl + id, {headers: headers});
+  }
+  createImage(_id: number,imagen: any): Observable<any>{
+    let auth_token = localStorage.getItem('token_value');    
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${auth_token}`
     });
-    return this.http.post<ImagenI>(this.apiUrl + id, imagen, {headers: headers});
+    return this.http.post(this.apiUrl + _id, imagen, {headers: headers});
   }
 
   deleteImage(id: number): Observable<{}>{

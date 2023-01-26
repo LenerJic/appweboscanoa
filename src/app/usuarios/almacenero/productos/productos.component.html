@@ -31,7 +31,6 @@
       <ng-template pTemplate="header">
           <tr>
               <th pSortableColumn="nombre">Nombre <p-sortIcon field="nombre"></p-sortIcon></th>
-              <th pSortableColumn="descripcion">Descripcion <p-sortIcon field="descripcion"></p-sortIcon></th>
               <th pSortableColumn="categoria">Categoria <p-sortIcon field="categoria"></p-sortIcon></th>
               <th pSortableColumn="stock">Stock <p-sortIcon field="stock"></p-sortIcon></th>
               <th pSortableColumn="precioCompra">Precio Compra <p-sortIcon field="precioCompra"></p-sortIcon></th>
@@ -45,7 +44,6 @@
       <ng-template pTemplate="body" let-product>
           <tr>
               <td>{{product.nombre}}</td>
-              <td>{{product.descripcion}}</td>
               <td>
                   <span *ngFor="let catg of lstcategorias">
                       {{(product.categoria === catg.id) ? catg.nombre : ''}}
@@ -60,15 +58,16 @@
                 <p-tag *ngIf="!product.estado" severity="danger" value="Sin Stock" [rounded]="true"></p-tag>
               </td>
               <td>{{product.fecha | date:'dd/MM/yyyy'}}</td>
-              <!-- <td *ngIf="product.imagenes[0] == null">
-                Sin Imagen
-              </td>
-              <td *ngIf="product.imagenes[0] !== null">
-                <img [src]="'https://apimueblesoscanoa.azurewebsites.net' +product.imagenes[0]" width="100" class="shadow-4" />
-              </td> -->
-              <td>{{(product.imagenes[0]!== null) ? 'Con Imagen' : 'Sin Imagen'}}</td>
               <td>
-                  <button pButton pRipple icon="pi pi-info-circle" class="p-button-rounded mr-2" [routerLink]="['detail',product.id]"></button>
+                <div *ngIf="product.imagenes[0] === null || product.imagenes.length === 0">
+                    Sin Imagen
+                </div>
+                <div *ngIf="product.imagenes[0] !== null && product.imagenes.length >= 1">
+                    <p-image [src]="product.imagenes[0]" [alt]="product.nombre" width="100" class="shadow-4" [preview]="true"></p-image>
+                </div>
+              </td>
+              <td>
+                  <button pButton pRipple icon="pi pi-info-circle" class="p-button-rounded mr-2" [routerLink]="['..','detail',product.id]"></button>
                   <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2" (click)="editProduct(product)"></button>
                   <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteProduct(product)"></button>
               </td>
@@ -178,8 +177,3 @@
 </p-dialog>
 <!-- ? ---------- -->
 <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
-<!--? ----------- -->
-<p-dialog [(visible)]="productDialog" header="Producto:" [breakpoints]="{'960px': '90vw'}"
- [modal]="true" [style]="{width: '550px','overflow-y': 'auto'}" styleClass="p-fluid">
-    <app-details-product></app-details-product>
-</p-dialog>

@@ -1,0 +1,100 @@
+<button pbutton label="Print" type="button" icon="pi pi-print"
+ ngxPrint printSectionId="invoice" printTitle="Mi Titulo" [useExistingCss]="true"
+ class="p-element p-button-outlined invoice-button p-button p-component" style="display: block; margin-bottom: 20px; margin-left: 6px">
+  <span class="p-button-icon p-button-icon-left pi pi-print" aria-hidden="true"></span>
+  <span class="p-button-label">Print</span>
+</button>
+<div  class="surface-card p-4 shadow-2 border-round">
+    <div id="invoice" class="card py-8 px-6 md:px-8 overflow-auto">
+        <div class="invoice">
+            <div class="flex flex-wrap align-items-start md:flex-row md:align-items-center md:justify-content-between border-bottom-1 surface-border pb-5 min-w-max">
+                <div class="flex flex-column">
+                    <img src="../../../../assets/images/logo_dark.png" width="80%">
+                    <span class="mb-2">Jiron Ica 971 064 Huancayo,</span>
+                    <span>PERÚ</span>
+                </div>
+                <div class="bg-right flex flex-column mt-5 md:mt-0">
+                    <div class="text-2xl font-semibold text-left md:text-right mb-3">BOLETA DE VENTA</div>
+                    <div class="flex flex-column">
+                    <div class="flex justify-content-between align-items-center mb-2">
+                        <span class="font-semibold mr-6">FECHA</span><span>30/08/2019</span>
+                    </div>
+                    <div class="flex justify-content-between align-items-center mb-2">
+                        <span class="font-semibold mr-6">SERIE </span><span>8523</span>
+                    </div>
+                    <div class="flex justify-content-between align-items-center">
+                        <span class="font-semibold mr-6">VENDEDOR</span><span>JOSE LUIS</span>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-5 mb-8 flex flex-column">
+                <div class="mb-3 text-2xl font-medium">BILL TO</div>
+                <span class="mb-2">Claire Williams, 148 Hope Lane</span>
+                <span>Palo Alto, CA 94304.</span>
+            </div>
+<!--         <div class="invoice-to">
+            <div class="invoice-date">29 January, 2021</div>
+            <div class="invoice-id">Invoice <span>#00002</span></div>
+            <div class="invoice-to-name">Customer Firm name</div>
+            <div class="invoice-to-info">
+                <div>Claire Williams, 148 Hope Lane</div>
+                <div>Palo Alto, CA 94304. </div>
+            </div>
+        </div> -->
+            <div #tabla id="tabla" class="invoice-items overflow-x-auto">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Line Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Green T-Shirt</td>
+                            <td>1</td>
+                            <td>$49.00</td>
+                            <td>$49.00</td>
+                        </tr>
+                        <tr>
+                            <td>Game Controller</td>
+                            <td>2</td>
+                            <td>$99.00</td>
+                            <td>$198.00</td>
+                        </tr>
+                        <tr>
+                            <td>Mini Speakers</td>
+                            <td>1</td>
+                            <td>$85.00</td>
+                            <td>$85.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="invoice-summary overflow-x-auto">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Sub total:</td>
+                            <td>$232,00</td>
+                        </tr>
+                        <tr>
+                            <td>Vat:</td>
+                            <td>$00,00</td>
+                        </tr>
+                        <tr>
+                            <td>Total:</td>
+                            <td>$232,00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="invoice-notes">
+                <div>Note: </div>
+            </div>
+        </div>
+    </div>
+</div>

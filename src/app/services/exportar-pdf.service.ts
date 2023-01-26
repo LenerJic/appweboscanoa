@@ -15,19 +15,19 @@ export class ExportarPdfService {
            titulo:string, 
            guardar?:boolean){
 
-      const doc = new jsPDF();
+    const doc = new jsPDF();
 
-      doc.text(titulo, doc.internal.pageSize.width/2, 8, {align: 'center'});
-      autoTable(doc, {
-        head: [encabezado],
-        body: cuerpo,
-        theme: 'grid'
-      });
+    doc.text(titulo, doc.internal.pageSize.width/2, 8, {align: 'center'});
+    autoTable(doc, {
+      head: [encabezado],
+      body: cuerpo,
+      theme: 'grid'
+    });
 
-      if (guardar) {
-        const hoy = new Date();
-        doc.save(hoy.getDate() + hoy.getMonth() + hoy.getFullYear() + hoy.getTime() + '.pdf');
-        doc.output('dataurlnewwindow');
-      };
-    }
+    if (guardar) {
+      const hoy = new Date();
+      doc.save(hoy.getDate() + hoy.getMonth() + hoy.getFullYear() + hoy.getTime() + '.pdf');
+      doc.output('dataurlnewwindow');
+    };
+  }
 }

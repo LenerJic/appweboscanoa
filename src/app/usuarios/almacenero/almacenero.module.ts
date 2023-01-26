@@ -20,6 +20,9 @@ import { TagModule } from 'primeng/tag';
 import {DialogModule} from 'primeng/dialog';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {ImageModule} from 'primeng/image';
+import {CarouselModule} from 'primeng/carousel';
+import {FileUploadModule} from 'primeng/fileupload';
 
 import { ProductoService } from 'src/app/services/producto.service';
 import { CategoriaService } from 'src/app/services/categoria.service';
@@ -29,6 +32,7 @@ import { ExportarPdfService } from 'src/app/services/exportar-pdf.service';
 // Date Import
 import localePy from '@angular/common/locales/es-PE';
 import { DetailsProductComponent } from './details-product/details-product.component'
+import { ImagenService } from 'src/app/services/imagen.service';
 registerLocaleData(localePy, 'es');
 
 @NgModule({
@@ -55,7 +59,10 @@ registerLocaleData(localePy, 'es');
     TagModule,
     DialogModule,
     ConfirmDialogModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    ImageModule,
+    CarouselModule,
+    FileUploadModule
   ],
   exports:[
     CategoriasComponent,
@@ -68,6 +75,7 @@ registerLocaleData(localePy, 'es');
     MessageService,
     ConfirmationService,
     ExportarPdfService,
+    ImagenService,
     DatePipe,
     {provide: LOCALE_ID, useValue: 'es'}
   ]

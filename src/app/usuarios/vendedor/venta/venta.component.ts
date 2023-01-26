@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { retry } from 'rxjs';
 import { ClienteI } from 'src/app/interfaces/ClienteInterface';
 import { ProductImgI } from 'src/app/interfaces/ProductInterface';
 import { DetalleVentaI } from 'src/app/interfaces/VentaInterface';
@@ -37,6 +38,7 @@ export class VentaComponent implements OnInit, OnDestroy{
     pUnit?: number;
     pTotal?: number;
   }[] = [];
+  sumaTotal : number = 0;
 
   dataCliente = {
     id: 0,
@@ -59,6 +61,7 @@ export class VentaComponent implements OnInit, OnDestroy{
 
   procederVenta: boolean = false;
   btnelegido: boolean = true;
+  btnAnular:boolean = true;
 
   constructor(public authService: AuthService,
               private clienteService: ClienteService,
@@ -84,8 +87,10 @@ export class VentaComponent implements OnInit, OnDestroy{
       cantidad: [0],
       producto: [''],
       pUnit: [0],
-      pTotal: [0]
+      pTotal: [0],
+      maxcantidad: [0]
     });
+
     this.detalleVentaForm = this.fb.group({
       id: [0],
       idVenta: [0],
@@ -100,13 +105,14 @@ export class VentaComponent implements OnInit, OnDestroy{
       numeroBoleta: [0],
       montopago: [0],
       fecha: [new Date()],
-    });    
+    });
   }
 
   get cantidad() { return this.oneProduct.get('cantidad'); }
   get producto() { return this.oneProduct.get('producto'); }
   get pUnit() { return this.oneProduct.get('pUnit'); }
   get pTotal() { return this.oneProduct.get('pTotal'); }
+  get maxcantidad() { return this.oneProduct.get('maxcantidad'); }
 
   filterClient(event) {
     let filtered : any[] = [];
@@ -125,6 +131,7 @@ export class VentaComponent implements OnInit, OnDestroy{
       this.dataCliente = this.datanull;
       this.selectedClient = '';
       this.procederVenta = false;
+      this.anularOption();
     } else {
       this.dataCliente = this.selectedClient;
       this.procederVenta = true;
@@ -138,8 +145,23 @@ export class VentaComponent implements OnInit, OnDestroy{
       contentStyle: {"overflow": "auto"},
       baseZIndex: 10000,
     });
-    this.ref.onClose.subscribe((producto: ProductImgI) => {         
-      if (producto !== undefined) {
+    this.ref.onClose.subscribe((producto: ProductImgI) => {
+      let dato_selecccionado : boolean = true;
+      let table_data : any;
+      if (this.tablaproducto.length !== 0) {       
+        const existe = this.tablaproducto.find( dato =>{
+          return dato?.producto === producto?.nombre;
+        });
+        table_data = this.tablaproducto[existe?.id -1];
+        if (table_data !== undefined) {          
+          if (table_data?.cantidad < producto?.stock){
+             dato_selecccionado = true
+          }  else{
+            dato_selecccionado = false
+          };
+        }
+      }
+      if (producto !== undefined && dato_selecccionado) {
         if (producto?.estado) {
           let p_id = this.tablaproducto.length;
           this.oneProduct = this.fb.group({
@@ -147,7 +169,8 @@ export class VentaComponent implements OnInit, OnDestroy{
             cantidad: [1],
             producto: [producto?.nombre],
             pUnit: [producto?.precioVenta],
-            pTotal: [producto?.precioVenta]
+            pTotal: [producto?.precioVenta],
+            maxcantidad: [producto?.stock]
           });
           this.messageService.add({
             severity:'info',
@@ -161,12 +184,21 @@ export class VentaComponent implements OnInit, OnDestroy{
             summary:'Este Producto No Tiene Stock',
             detail: producto?.nombre
           });
-        }
+        };
+      } else if (producto !== undefined && !dato_selecccionado){
+        this.messageService.add({
+          severity:'error',
+          summary:'Ud. ya registro este producto con todas las unidades disponibles.',
+          detail: `Ud. ya registro el producto ${producto?.nombre} con todas las unidades disponibles.`,
+          life: 5000
+        });
       }
     });
   }
   deleteProduct(product){
     this.tablaproducto.splice(product.id-1,1);
+    this.calcularTotal();
+    this.valueAnular();
   }
   inserintable(){
     this.oneProduct.value.pTotal = this.oneProduct.value.cantidad * this.oneProduct.value.pUnit;
@@ -175,19 +207,68 @@ export class VentaComponent implements OnInit, OnDestroy{
     });
     if (productExist !== undefined) {
       let p_date = this.tablaproducto[productExist?.id -1];
+      let productdata = this.oneProduct.value;
       let oldcantidad = p_date.cantidad;
-      let newcantidad = this.oneProduct.value.cantidad += oldcantidad;
-      p_date.cantidad = newcantidad;
-      p_date.pTotal = p_date.cantidad * p_date.pUnit;
-      this.oneProduct.reset();
-      
-    } else {
+      let actualcantidad = productdata.cantidad;
+      let newcantidad = productdata.cantidad += oldcantidad;
+      let _maxcantidad = productdata.maxcantidad;
+
+      if (oldcantidad + actualcantidad > productdata.maxcantidad) {
+        let olddata = this.oneProduct.value;
+        let _datathis = this.fb.group({
+          id: [olddata.id],
+          cantidad: [1],
+          producto: [olddata.producto],
+          pUnit: [olddata.pUnit],
+          pTotal: [olddata.pUnit],
+          maxcantidad: [olddata.maxcantidad]
+        });
+        this.oneProduct.reset();
+        this.oneProduct = _datathis;        
+        this.messageService.add({
+          severity:'warn',
+          summary:'Fuera del Limite de Stock',
+          detail: `Solo hay ${_maxcantidad} unidades en stock de este producto`
+        });
+      } else{
+        p_date.cantidad = newcantidad;
+        p_date.pTotal = p_date.cantidad * p_date.pUnit;
+        this.oneProduct.reset();
+        this.btnelegido = true;
+      }      
+    } else {      
       this.tablaproducto.push(this.oneProduct.value);
       this.oneProduct.reset();
+      this.btnelegido = true;
     }
-    this.btnelegido = true;
+    this.calcularTotal();
+    this.valueAnular();
+  }
+  calcularTotal(){
+    let total = 0;
+    for (let subtotal of this.tablaproducto) {
+      total += subtotal.pTotal;
+    }
+    this.sumaTotal = total;
   }
   //*  #endregion
+
+  anularOption(){
+    this.tablaproducto = [];
+    this.insertproducto = [];
+    this.ventaForm.reset();
+    this.detalleVentaForm.reset();
+    this.oneProduct.reset();
+    this.calcularTotal();
+    this.btnAnular = true;
+  }
+  valueAnular(){
+    if(this.tablaproducto.length <= 0){
+      this.btnAnular = true;
+    }else{
+      this.btnAnular = false;
+    }
+  }
 
   ngOnDestroy() {
     if (this.ref) {

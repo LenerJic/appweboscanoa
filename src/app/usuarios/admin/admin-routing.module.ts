@@ -23,17 +23,9 @@ const routes: Routes = [
       { path: 'clientes', component: ClientesComponent },
       { path: 'categorias', component: CategoriasComponent },
       { path: 'productos', component: ProductosComponent },
-      { path: 'productos/detail/:id', component: HomeComponent },
+      { path: 'detail/:id', component: DetailsProductComponent },
       { path: 'venta', component: VentaComponent },
       { path: '**', redirectTo: 'not-found', pathMatch: 'full' }
-      /* {
-        path: 'almacen',
-        children: [
-          { path: 'categorias', component: CategoriasComponent },
-          { path: 'productos', component: ProductosComponent },
-          { path: '**', redirectTo: 'not-found', pathMatch: 'full' }
-        ]
-      }, */
       
     ]
   }

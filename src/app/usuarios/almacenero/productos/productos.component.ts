@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService, PrimeNGConfig } from 'primeng/api';
@@ -58,7 +58,7 @@ export class ProductosComponent implements OnInit {
 
   cargarData(){
     this.productoService.getProducts().subscribe((data: any) => {
-      this.products = data.result;
+      this.products = data.result;      
     });
   }
 
@@ -190,7 +190,7 @@ export class ProductosComponent implements OnInit {
 
   exportPdf() {
     const titulo = "Lista de Productos";
-    const encabezado = ["Id", "Nombre", "Descripcion", "Categoria", "Stock", "Precio de Compra", "Precio de Venta", "Ultimo Registro", "Estado"];
+    const encabezado = ["COD", "Nombre", "Categoria", "Stock", "Precio de Compra", "Precio de Venta", "Ultimo Registro", "Estado"];
 
     this.productoService.getProducts().subscribe((data:any)=>{
       const cuerpo = Object(data.result).map(
@@ -198,7 +198,6 @@ export class ProductosComponent implements OnInit {
           const datos = [
             obj.id,
             obj.nombre,
-            obj.descripcion,
             this.lstcategorias.find((categoria:any)=>categoria.id === obj.categoria)?.nombre ?? 'Categoria no registrado',
             obj.stock,
             obj.precioCompra,

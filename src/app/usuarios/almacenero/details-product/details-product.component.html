@@ -1,2 +1,87 @@
-DATA:
-{{respuesta | json}}
+<p-toast></p-toast>
+<div class="container-fluid p-4">
+    <div class="bg-primary-reverse p-4 shadow-2 border-round">
+        <div class="font-medium text-3xl text-900 mb-3">
+            <button pButton pRipple type="button" icon="pi pi-arrow-left" class="p-button-rounded p-button-text" (click)="back()"></button>
+            Detalles del producto</div>
+        <div *ngIf="dataproduct; else table_error" class="grid grid-nogutter border-top-1 surface-border pt-2">
+            <div class="col-12 md:col-6 p-3">
+                <div class="text-500 font-medium mb-2">Nombre</div>
+                <div class="text-900">{{dataproduct?.nombre}}</div>
+            </div>
+            <div class="col-12 md:col-6 p-3">
+                <div class="text-500 font-medium mb-2">Categoría</div>
+                <div class="text-900">{{namecategoria}}</div>
+            </div>
+            <div class="col-12 md:col-6 p-3">
+                <div class="text-500 font-medium mb-2">Descripción</div>
+                <div class="text-900">{{dataproduct?.descripcion}}</div>
+            </div>
+            <div class="col-12 md:col-6 p-3">
+                <div class="text-500 font-medium mb-2">Precio de Compra</div>
+                <div class="text-900">{{dataproduct?.precioCompra | currency:'S/ '}}</div>
+            </div>
+            <div class="col-12 md:col-6 p-3">
+                <div class="text-500 font-medium mb-2">Stock</div>
+                <div class="text-900">{{dataproduct?.stock}} unidad(es)</div>
+            </div>
+            <div class="col-12 md:col-6 p-3">
+                <div class="text-500 font-medium mb-2">Precio de Venta</div>
+                <div class="text-900">{{dataproduct?.precioVenta | currency:'S/ '}}</div>
+            </div>
+            <div class="col-12 md:col-6 p-3">
+                <div class="text-500 font-medium mb-2">Estado</div>
+                <p-tag *ngIf="(dataproduct?.estado && dataproduct?.stock>= 10)" severity="success" value="Con Stock" [rounded]="true"></p-tag>
+                <p-tag *ngIf="(dataproduct?.estado && dataproduct?.stock < 10)" severity="warning" value="Bajo Stock" [rounded]="true"></p-tag>
+                <p-tag *ngIf="!dataproduct?.estado" severity="danger" value="Sin Stock" [rounded]="true"></p-tag>
+            </div>
+            <div class="col-12 md:col-6 p-3">
+                <div class="text-500 font-medium mb-2">Último Registro</div>
+                <div class="text-900">{{dataproduct?.fecha | date:'dd/MM/yyyy'}}</div>
+            </div>
+            <div class="col-12 p-3">
+                <h5>Imagenes</h5>
+                <div *ngIf="!dataimagen" class="text-500 font-medium mb-2">No hay imagenes cargadas, sube nuevas imagenes</div><br>
+                <p-button type="button" styleClass="p-button p-button-success p-button-rounded" icon="pi pi-plus" (click)="imageDialog = true"></p-button>
+                <p-carousel [value]="dataproduct?.imagenes" [numVisible]="3" [numScroll]="3" [circular]="false" [responsiveOptions]="responsiveOptions"
+                *ngIf="dataimagen">
+                    <ng-template let-imagen pTemplate="item">
+                        <div class="product-item">
+                            <div class="product-item-content">
+                                <div class="mb-3">
+                                    <img [src]="imagen" class="product-image"/>
+                                </div>
+                                <div>
+                                    <div class="car-buttons mt-5">
+                                        <p-button type="button" styleClass="p-button p-button-warning p-button-rounded" icon="pi pi-trash" (click)="prueba()"></p-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-carousel>
+            </div>
+        </div>
+        <ng-template #table_error>
+            <p-progressSpinner class="d-flex justify-content-center align-items-center mt-5"></p-progressSpinner>
+        </ng-template>
+    </div>
+</div>
+<!--? ------------------------- -->
+<p-dialog [(visible)]="imageDialog" header="Nueva Imagen:" [breakpoints]="{'960px': '90vw'}"
+ [modal]="true" [style]="{width: '50%','overflow-y': 'auto'}" styleClass="p-fluid">   
+    <ng-template pTemplate="content">
+        <p-fileUpload [multiple]="true" [customUpload]="true"
+          accept="image/*"
+          (uploadHandler)="myUploader($event)"          
+          chooseLabel="Subir"
+          uploadStyleClass="p-button-success"
+          uploadLabel="Enviar"
+          cancelStyleClass="p-button-secondary"
+          cancelLabel="Cancelar"
+          removeStyleClass="p-button-rounded p-button-danger p-button-text"
+          invalidFileTypeMessageSummary="Tipo de archivo no permitido"
+          invalidFileTypeMessageDetail="Solo se permiten imagenes"></p-fileUpload>
+    </ng-template>
+</p-dialog>
+<!--? -------------------------- -->
