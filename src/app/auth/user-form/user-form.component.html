@@ -9,7 +9,7 @@
                     <span class="text-600 font-medium">Crea una nueva contraseña</span>
                 </div>
 
-                <div [formGroup]="newpasswordForm" (ngSubmit)="onSubmit()">
+                <div [formGroup]="newpasswordForm">
                     <span class="p-input-icon-right pb-1">
                         <label for="userName" class="block text-900 text-xl font-medium mb-2">Usuario</label>
                         <i class="pi pi-user mt-2"></i>
@@ -36,8 +36,8 @@
                         <small *ngIf="validarPassword(newpasswordForm)===false && password.touched" class="p-error">Asegúrese de ingresar correctamente su contraseña.</small>
                     </div>
                     <br>
-                    <p-button label="Guardar" [disabled]="!newpasswordForm.valid || (password.value !== passwordConfirm.value)"
-                    styleClass="w-full p-3 mt-3 text-xl" [loading]="cargando" type="ngSubmit"></p-button>
+                    <button pButton type="submit" label="Guardar" [disabled]="!newpasswordForm.valid || (password.value !== passwordConfirm.value)"
+                    class="w-full p-3 mt-3 text-xl" [loading]="cargando" (click)="enviar()"></button>
                 </div>
             </div>
         </div>

@@ -31,7 +31,7 @@ export class UserFormComponent {
   get password() { return this.newpasswordForm.get('password'); }
   get passwordConfirm() { return this.newpasswordForm.get('passwordConfirm'); }
 
-  onSubmit(){
+  enviar(){   
     this.cargando = true;
     let formData = this.newpasswordForm.value;
     let newdata = {
@@ -44,8 +44,10 @@ export class UserFormComponent {
         summary: 'Completado!',
         detail: data.displayMessage
       });
-      this.cargando=false;
-      this.router.navigate(['/login']);
+      setTimeout(() => {
+        this.cargando=false;
+        this.router.navigate(['/login']);
+      }, 2000);
     })
   }
   validarPassword(form:FormGroup){
