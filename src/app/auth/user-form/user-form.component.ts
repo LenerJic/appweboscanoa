@@ -45,9 +45,7 @@ export class UserFormComponent {
         detail: data.displayMessage
       });
       this.cargando=false;
-      setTimeout(()=> {
-        this.router.navigate(['/login']);
-      }, 2000);
+      this.router.navigate(['/login']);
     })
   }
   validarPassword(form:FormGroup){
