@@ -6,7 +6,7 @@ import { CategoriaService } from 'src/app/services/categoria.service';
 import { ProductoService } from 'src/app/services/producto.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ImagenService } from 'src/app/services/imagen.service';
-import { FormBuilder } from '@angular/forms';
+
 @Component({
   selector: 'app-details-product',
   templateUrl: './details-product.component.html',
