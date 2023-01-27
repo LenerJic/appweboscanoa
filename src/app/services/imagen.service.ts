@@ -27,12 +27,11 @@ export class ImagenService {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${auth_token}`
     });
-    return this.http.get(this.apiUrl + id, {headers: headers});
+    return this.http.get(this.apiUrl+'idProducto?idProducto='+ id, {headers: headers});
   }
-  createImage(_id: number,imagen: any): Observable<any>{
+  createImage(_id: number,imagen: FormData): Observable<any>{
     let auth_token = localStorage.getItem('token_value');    
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
       'Authorization': `Bearer ${auth_token}`
     });
     return this.http.post(this.apiUrl + _id, imagen, {headers: headers});

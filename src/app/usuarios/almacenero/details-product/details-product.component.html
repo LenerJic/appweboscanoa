@@ -43,17 +43,18 @@
                 <h5>Imagenes</h5>
                 <div *ngIf="!dataimagen" class="text-500 font-medium mb-2">No hay imagenes cargadas, sube nuevas imagenes</div><br>
                 <p-button type="button" styleClass="p-button p-button-success p-button-rounded" icon="pi pi-plus" (click)="imageDialog = true"></p-button>
-                <p-carousel [value]="dataproduct?.imagenes" [numVisible]="3" [numScroll]="3" [circular]="false" [responsiveOptions]="responsiveOptions"
-                *ngIf="dataimagen">
+                <p-carousel [value]="lstimagen" [numVisible]="3" [numScroll]="3" [circular]="false" [responsiveOptions]="responsiveOptions"
+                *ngIf="lstimagen">
                     <ng-template let-imagen pTemplate="item">
                         <div class="product-item">
                             <div class="product-item-content">
                                 <div class="mb-3">
-                                    <img [src]="imagen" class="product-image"/>
+                                    <img [src]="imagen.imagenUrl" class="product-image"/>
                                 </div>
                                 <div>
                                     <div class="car-buttons mt-5">
-                                        <p-button type="button" styleClass="p-button p-button-warning p-button-rounded" icon="pi pi-trash" (click)="prueba()"></p-button>
+                                        <p-button type="button" styleClass="p-button p-button-warning p-button-rounded" icon="pi pi-trash"
+                                         [disabled]="btnTrash" (click)="deleteImage(imagen.id)"></p-button>
                                     </div>
                                 </div>
                             </div>
@@ -85,3 +86,4 @@
     </ng-template>
 </p-dialog>
 <!--? -------------------------- -->
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
