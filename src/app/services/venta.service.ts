@@ -8,8 +8,8 @@ import { VentaI } from '../interfaces/VentaInterface';
 })
 export class VentaService {
 
-  // apiUrl: string = 'https://apimueblesoscanoa.azurewebsites.net/api/Ventas/';
-  apiUrl: string = 'https://localhost:7029/api/Ventas/';
+  apiUrl: string = 'https://apimueblesoscanoa.azurewebsites.net/api/Ventas/';
+  // apiUrl: string = 'https://localhost:7029/api/Ventas/';
 
   constructor(private http: HttpClient) { }
 
@@ -31,21 +31,21 @@ export class VentaService {
     return this.http.get<VentaI[]>(this.apiUrl + id, {headers: headers});
   }
 
-  createVenta(category: VentaI): Observable<VentaI>{
+  createVenta(venta: VentaI): Observable<VentaI>{
     let auth_token = localStorage.getItem('token_value');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${auth_token}`
     });
-    return this.http.post<VentaI>(this.apiUrl, category, {headers: headers});
+    return this.http.post<VentaI>(this.apiUrl, venta, {headers: headers});
   }
-  updateVenta(id: number, category: VentaI): Observable<VentaI>{
+  updateVenta(id: number, venta: VentaI): Observable<VentaI>{
     let auth_token = localStorage.getItem('token_value');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${auth_token}`
     });
-    return this.http.put<VentaI>(this.apiUrl + id, category, {headers: headers});
+    return this.http.put<VentaI>(this.apiUrl + id, venta, {headers: headers});
   }
 
   deleteVenta(id: number): Observable<{}>{

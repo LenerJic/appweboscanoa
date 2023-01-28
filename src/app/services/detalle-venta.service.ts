@@ -8,8 +8,8 @@ import { DetalleVentaI } from '../interfaces/VentaInterface';
 })
 export class DetalleVentaService {
 
-  // apiUrl: string = 'https://apimueblesoscanoa.azurewebsites.net/api/DetalleVentas/';
-  apiUrl: string = 'https://localhost:7029/api/DetalleVentas/';
+  apiUrl: string = 'https://apimueblesoscanoa.azurewebsites.net/api/DetalleVentas/';
+  // apiUrl: string = 'https://localhost:7029/api/DetalleVentas/';
 
   constructor(private http: HttpClient) { }
 
@@ -31,21 +31,21 @@ export class DetalleVentaService {
     return this.http.get<DetalleVentaI[]>(this.apiUrl + id, {headers: headers});
   }
 
-  createDetalleVenta(category: DetalleVentaI): Observable<DetalleVentaI>{
+  createDetalleVenta(de_venta: DetalleVentaI): Observable<DetalleVentaI>{
     let auth_token = localStorage.getItem('token_value');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${auth_token}`
     });
-    return this.http.post<DetalleVentaI>(this.apiUrl, category, {headers: headers});
+    return this.http.post<DetalleVentaI>(this.apiUrl, de_venta, {headers: headers});
   }
-  updateDetalleVenta(id: number, category: DetalleVentaI): Observable<DetalleVentaI>{
+  updateDetalleVenta(id: number, de_venta: DetalleVentaI): Observable<DetalleVentaI>{
     let auth_token = localStorage.getItem('token_value');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${auth_token}`
     });
-    return this.http.put<DetalleVentaI>(this.apiUrl + id, category, {headers: headers});
+    return this.http.put<DetalleVentaI>(this.apiUrl + id, de_venta, {headers: headers});
   }
 
   deleteDetalleVenta(id: number): Observable<{}>{

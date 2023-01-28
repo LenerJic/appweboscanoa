@@ -51,7 +51,8 @@
             <div class="col-6">
                 <p-button label="Buscar" icon="pi pi-search" (onClick)="showProducts()"
                  styleClass="p-button-sm p-button-success mr-2 mb-2"></p-button>
-                <button pButton label="Guardar" icon="pi pi-save" class="p-button-sm mr-2 mb-2"></button>
+                <p-button label="Guardar" icon="pi pi-save" styleClass="p-button-sm mr-2 mb-2"
+                 [disabled]="btnGuardar" (onClick)="processSale()"></p-button>
                 <p-button label="Anular" icon="pi pi-times-circle" styleClass="p-button-sm p-button-danger mb-2"
                     [disabled]="btnAnular" (onClick)="anularOption()"></p-button>
             </div>
@@ -120,4 +121,5 @@
         
     </div>
 </div>
-<!-- <app-boleta-venta></app-boleta-venta> -->
+<!-- ----- -->
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

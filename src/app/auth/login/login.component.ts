@@ -40,6 +40,7 @@ export class LoginComponent {
           } else {
             this.router.navigate(['/not-found']);
           }
+          this.cargando=false;
         } else {
           this.messageService.add({
             severity:'error',
@@ -49,11 +50,12 @@ export class LoginComponent {
           setTimeout(() => {
             this.router.navigate(['/login']);
           }, 3000);
+          this.cargando=false;
         }
       } else {
         this.router.navigate(['/changePassword']);
+        this.cargando=false;
       }
-      this.cargando=false;
     },
     (errorData) => {
       setTimeout(()=>{

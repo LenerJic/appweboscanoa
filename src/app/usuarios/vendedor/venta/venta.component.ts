@@ -1,14 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { retry } from 'rxjs';
 import { ClienteI } from 'src/app/interfaces/ClienteInterface';
 import { ProductImgI } from 'src/app/interfaces/ProductInterface';
-import { DetalleVentaI } from 'src/app/interfaces/VentaInterface';
+import { DetalleVentaI, VentaI } from 'src/app/interfaces/VentaInterface';
 import { AuthService } from 'src/app/services/auth.service';
 import { ClienteService } from 'src/app/services/cliente.service';
+import { DetalleVentaService } from 'src/app/services/detalle-venta.service';
 import { ProductoService } from 'src/app/services/producto.service';
+import { VentaService } from 'src/app/services/venta.service';
 import { ProductListDemo } from './ProductListDemo';
 
 @Component({
@@ -22,24 +24,9 @@ export class VentaComponent implements OnInit, OnDestroy{
   idEmpleado: number;
   clientes: ClienteI[];
   lstproductos: ProductImgI[];
+  lstventas: VentaI[];
   filteredClientes: any[];
   selectedClient: any;
-  tablaproducto: {
-    id?: number;
-    cantidad?: number;
-    producto?: string;
-    pUnit?: number;
-    pTotal?: number;
-  }[] = [];
-  insertproducto: {
-    id?: number;
-    cantidad?: number;
-    producto?: string;
-    pUnit?: number;
-    pTotal?: number;
-  }[] = [];
-  sumaTotal : number = 0;
-
   dataCliente = {
     id: 0,
     nombres: '',
@@ -52,7 +39,15 @@ export class VentaComponent implements OnInit, OnDestroy{
     celular: '',
   };
   datanull = this.dataCliente;
-
+  tablaproducto: {
+    id?: number;
+    idProducto?: number;
+    cantidad?: number;
+    producto?: string;
+    pUnit?: number;
+    pTotal?: number;
+  }[] = [];
+  sumaTotal : number = 0;
   ventaForm: FormGroup;
   detalleVentaForm: FormGroup;
   oneProduct: FormGroup;
@@ -62,12 +57,16 @@ export class VentaComponent implements OnInit, OnDestroy{
   procederVenta: boolean = false;
   btnelegido: boolean = true;
   btnAnular:boolean = true;
+  btnGuardar: boolean = true;
 
   constructor(public authService: AuthService,
               private clienteService: ClienteService,
               private productoService : ProductoService,
               private dialogService: DialogService,
               private messageService: MessageService,
+              private confirmationService: ConfirmationService,
+              private ventaService: VentaService,
+              private detalleventaService: DetalleVentaService,
               private fb: FormBuilder) { }
 
   ref: DynamicDialogRef;
@@ -79,11 +78,15 @@ export class VentaComponent implements OnInit, OnDestroy{
       this.clientes = data.result;      
     });
     this.productoService.getProducts().subscribe((data:any)=>{
-      this.lstproductos =data.result;
+      this.lstproductos = data.result;
     });
+    this.ventaService.getVentas().subscribe((data:any)=>{
+      this.lstventas = data.result;
+    })
 
     this.oneProduct = this.fb.group({
       id: [0],
+      idProducto: [0],
       cantidad: [0],
       producto: [''],
       pUnit: [0],
@@ -137,7 +140,7 @@ export class VentaComponent implements OnInit, OnDestroy{
       this.procederVenta = true;
     }
   }
-  //* #region Lista de Productos
+  // * #region Lista de Productos
   showProducts(){
     this.ref = this.dialogService.open(ProductListDemo,{
       header: 'Lista de Productos',
@@ -166,6 +169,7 @@ export class VentaComponent implements OnInit, OnDestroy{
           let p_id = this.tablaproducto.length;
           this.oneProduct = this.fb.group({
             id: [p_id+1],
+            idProducto: [producto?.id],
             cantidad: [1],
             producto: [producto?.nombre],
             pUnit: [producto?.precioVenta],
@@ -217,6 +221,7 @@ export class VentaComponent implements OnInit, OnDestroy{
         let olddata = this.oneProduct.value;
         let _datathis = this.fb.group({
           id: [olddata.id],
+          idProducto: [olddata.idProducto],
           cantidad: [1],
           producto: [olddata.producto],
           pUnit: [olddata.pUnit],
@@ -251,22 +256,109 @@ export class VentaComponent implements OnInit, OnDestroy{
     }
     this.sumaTotal = total;
   }
-  //*  #endregion
+  // * #endregion
+
+  processSale(){
+    this.confirmationService.confirm({
+      message: '¿Desea realizar la venta?',
+      header: 'Confirmar Proceso de Venta',
+      acceptButtonStyleClass: 'p-button-info p-button-text',
+      rejectButtonStyleClass: 'p-button-danger p-button-text',
+      acceptLabel: 'Sí',
+      rejectLabel: 'No',
+      defaultFocus: 'none',
+      icon: 'pi pi-info-circle',
+      accept: () => {
+        this.saveSale();
+      },
+    });
+  }
+
+  saveSale(){
+    let dataVenta: any;
+    let _idCliente = this.dataCliente.id;
+    
+    this.ventaForm = this.fb.group({
+      id: [0],
+      idCliente: [_idCliente],
+      idEmpleado: [this.idEmpleado],
+      numeroBoleta: [this.lstventas.length+1],
+      montopago: [0],
+      fecha: [new Date()],
+    });
+    try {
+      // Create Sale
+      this.ventaService.createVenta(this.ventaForm.value).subscribe(data=>{},(e)=>{
+        console.log(e);
+      })
+      let ventaId = this.ventaForm.value.numeroBoleta;
+      // Sale x Sale
+      for(let pedido of this.tablaproducto){
+        this.detalleVentaForm = this.fb.group({
+          id: [0],
+          idVenta: [ventaId],
+          idMueble: [pedido.idProducto],
+          cantidad: [pedido.cantidad],
+          subtotal: [pedido.pTotal]
+        });
+        console.log(this.detalleVentaForm.value);
+        this.detalleventaService.createDetalleVenta(this.detalleVentaForm.value).subscribe((data:any)=>{
+          this.detalleVentaForm.reset();
+        },
+        (e)=>{
+          console.log(e);
+          this.detalleVentaForm.reset();
+          this.messageService.add({
+            severity:'error', summary: 'Error',
+            detail: 'No se pudo completar la acción', life: 3000
+          });
+        });
+      }
+      // Update Sale
+      this.ventaForm = this.fb.group({
+        id: [ventaId],
+        idCliente: [_idCliente],
+        idEmpleado: [this.idEmpleado],
+        numeroBoleta: [ventaId],
+        montopago: [this.sumaTotal],
+        fecha: [new Date()],
+      });
+      this.ventaService.updateVenta(ventaId,this.ventaForm.value).subscribe((data:any)=>{
+        this.messageService.add({
+          severity:'success', summary: 'Éxito!',
+          detail: 'Se guardaron los datos de la venta', life: 3000
+        });
+      },
+      (e)=>{
+        console.log(e);
+        this.messageService.add({
+          severity:'error', summary: 'Error',
+          detail: 'No se pudo guardar la venta', life: 3000
+        });
+      });
+      this.anularOption();
+    } catch (error) {
+      console.log(error);
+      this.anularOption();
+    }
+  }
 
   anularOption(){
     this.tablaproducto = [];
-    this.insertproducto = [];
     this.ventaForm.reset();
     this.detalleVentaForm.reset();
     this.oneProduct.reset();
     this.calcularTotal();
+    this.btnGuardar = true;
     this.btnAnular = true;
   }
   valueAnular(){
     if(this.tablaproducto.length <= 0){
       this.btnAnular = true;
+      this.btnGuardar = true;
     }else{
       this.btnAnular = false;
+      this.btnGuardar = false;
     }
   }
 
