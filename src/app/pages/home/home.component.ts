@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
@@ -8,6 +9,7 @@ import { ClienteService } from 'src/app/services/cliente.service';
 import { DocumentoService } from 'src/app/services/documento.service';
 import { EmpleadoService } from 'src/app/services/empleado.service';
 import { ProductoService } from 'src/app/services/producto.service';
+import { VentaService } from 'src/app/services/venta.service';
 
 @Component({
   selector: 'app-home',
@@ -16,9 +18,13 @@ import { ProductoService } from 'src/app/services/producto.service';
 })
 export class HomeComponent implements OnInit {
 
+  pipe = new DatePipe('es-PE');
+
   totalUsers: number = 0;
   totalClientes: number = 0;
   totalProductos: number = 0;
+  totalVentas: number = 0;
+  totalVentasHoy: number = 0;
   idUser: number = 0;
   datoEmpleado: EmpleadoI;
   lstdocumento: Tipo_Doc[] = [];
@@ -33,6 +39,7 @@ export class HomeComponent implements OnInit {
   constructor (private empleadoService: EmpleadoService,
                private clienteService: ClienteService,
                private productosService: ProductoService,
+               private ventasService: VentaService,
                private authService: AuthService,
                private docService: DocumentoService,
                private messageService: MessageService,
@@ -50,6 +57,16 @@ export class HomeComponent implements OnInit {
     });
     this.productosService.getProducts().subscribe((data:any)=>{
       this.totalProductos = data.result.length;
+    });
+    this.ventasService.getVentas().subscribe((data:any)=>{
+      this.totalVentas = data.result.length;
+      for (const venta of data.result) {
+        let fechaVenta = this.pipe.transform(venta.fecha, 'dd/MM/yyyy'),
+            fechaHoy = this.pipe.transform(new Date(), 'dd/MM/yyyy');
+        if (fechaVenta == fechaHoy) {
+          ++this.totalVentasHoy;
+        }
+      }
     });
     // Ventas - falta
     this.docService.getDocument().subscribe((data:any)=>{

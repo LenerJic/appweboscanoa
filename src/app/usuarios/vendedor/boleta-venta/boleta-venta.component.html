@@ -36,20 +36,20 @@
                     </span>
                 </div>
                 <div class="mb-2">
-                    <span class="font-semibold text-600 text-lg">Documento: </span>
-                    <span>{{dataCliente?.nroDocumento}}</span>
-                </div>
-                <div class="mb-2">
-                    <span class="font-semibold text-600 text-lg">Direccion: </span>
+                    <span class="font-semibold text-600">Documento: </span>
+                    <span>{{dataCliente?.nroDocumento}},      </span>
+                    <span class="font-semibold text-600">Direccion: </span>
                     <span>{{dataCliente?.direccion}}</span>
                 </div>
                 <div class="mb-2">
-                    <span class="font-semibold text-600 text-lg">Correo: </span>
-                    <span>{{dataCliente?.correo}}</span>
+                    <span class="font-semibold text-600">Correo: </span>
+                    <span>{{dataCliente?.correo}},      </span>
+                    <span class="font-semibold text-600">Celular: </span>
+                    <span>{{dataCliente?.celular}}</span>
                 </div>
                 <div>
-                    <span class="font-semibold text-600 text-lg">Celular: </span>
-                    <span>{{dataCliente?.celular}}</span>
+                    <span class="font-semibold text-600">Forma de Pago: </span>
+                    <span>Efectivo</span>
                 </div>
             </div>
             <div #tabla id="tabla" class="invoice-items overflow-x-auto">

@@ -1,6 +1,6 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ClienteI } from 'src/app/interfaces/ClienteInterface';
@@ -53,7 +53,6 @@ export class VentaComponent implements OnInit, OnDestroy{
   oneProduct: FormGroup;
 
   pruebaDetalle: DetalleVentaI[];
-
   procederVenta: boolean = false;
   btnelegido: boolean = true;
   btnAnular:boolean = true;
@@ -67,7 +66,8 @@ export class VentaComponent implements OnInit, OnDestroy{
               private confirmationService: ConfirmationService,
               private ventaService: VentaService,
               private detalleventaService: DetalleVentaService,
-              private fb: FormBuilder) { }
+              private fb: FormBuilder,
+              private router: Router) { }
 
   ref: DynamicDialogRef;
 
@@ -275,9 +275,7 @@ export class VentaComponent implements OnInit, OnDestroy{
   }
 
   saveSale(){
-    let dataVenta: any;
     let _idCliente = this.dataCliente.id;
-    
     this.ventaForm = this.fb.group({
       id: [0],
       idCliente: [_idCliente],
@@ -302,6 +300,35 @@ export class VentaComponent implements OnInit, OnDestroy{
             subtotal: [pedido.pTotal]
           });
           this.detalleventaService.createDetalleVenta(this.detalleVentaForm.value).subscribe((data:any)=>{
+            // Update Product
+            this.productoService.getProduct(pedido.idProducto).subscribe((data:any)=>{
+              let datos = data.result[0],
+                  cant = pedido.cantidad,
+                  resultStock = datos.stock - cant,
+                  newStock : number,
+                  newEstado : boolean;
+              if (resultStock >= 1) {
+                newStock = datos.stock - cant;
+                newEstado = true;
+              }else if (resultStock <= 0){
+                newStock = 0;
+                newEstado = false;
+              }
+              let productobj = {
+                id: pedido.idProducto,
+                nombre: datos.nombre,
+                descripcion: datos.descripcion,
+                stock: newStock,
+                categoria: datos.categoria,
+                precioCompra: datos.precioCompra,
+                precioVenta: datos.precioVenta,
+                estado: newEstado,
+                fecha: new Date()
+              }
+              this.productoService.updateProduct(pedido.idProducto, productobj).subscribe(
+                (data:any) =>{}, e => console.log(e)
+              );
+            }, e => console.log(e))
             this.detalleVentaForm.reset();
           },
           (e)=>{
@@ -336,6 +363,15 @@ export class VentaComponent implements OnInit, OnDestroy{
           });
         });
         this.anularOption();
+        let rol = this.authService.rolUser;
+        if (rol.toLowerCase() === 'administrador') {
+          rol = 'admin';
+        } else {
+          rol = 'vendedor'
+        }
+        setTimeout(() => {
+          this.router.navigate([rol,'boleta',ventaId]);
+        }, 1500);
       },
       (e)=>{
         console.log(e);
