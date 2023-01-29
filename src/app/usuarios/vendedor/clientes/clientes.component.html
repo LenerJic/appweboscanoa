@@ -48,7 +48,7 @@
             <td>{{client.apellidoMat}}</td>
             <td>
                 <span *ngFor="let doc of lstdocumento">
-                    {{(client.tipoDocumento === doc.id) ? doc.nombre : ''}}
+                    {{(doc.id === client.tipoDocumento) ? doc.nombre : ''}}
                 </span>
             </td>
             <td>{{client.nroDocumento}}</td>

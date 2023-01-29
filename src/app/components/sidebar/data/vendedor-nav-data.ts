@@ -9,4 +9,9 @@ export const navbarVendedor = [
         icon: 'pi pi-cart-plus',
         label: 'Vender'
     },
+    {
+        routerLink: 'detail-venta',
+        icon: 'pi pi-book',
+        label: 'Detalle de Ventas'
+    }
 ];

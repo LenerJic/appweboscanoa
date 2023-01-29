@@ -20,11 +20,11 @@ const routes: Routes = [
       { path: '', component: HomeComponent },
       { path: 'home', component: HomeComponent },
       { path: 'empleados', component: EmpleadosComponent },
-      { path: 'clientes', component: ClientesComponent },
-      { path: 'categorias', component: CategoriasComponent },
-      { path: 'productos', component: ProductosComponent },
-      { path: 'detail/:id', component: DetailsProductComponent },
-      { path: 'venta', component: VentaComponent },
+      // { path: 'clientes', component: ClientesComponent },
+      // { path: 'categorias', component: CategoriasComponent },
+      // { path: 'productos', component: ProductosComponent },
+      // { path: 'detail/:id', component: DetailsProductComponent },
+      // { path: 'venta', component: VentaComponent },
       { path: '**', redirectTo: 'not-found', pathMatch: 'full' }
       
     ]

@@ -28,13 +28,15 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import localePy from '@angular/common/locales/es-PE';
 import { VentaComponent } from './venta/venta.component';
 import { BoletaVentaComponent } from './boleta-venta/boleta-venta.component';
+import { DetailVentaComponent } from './detail-venta/detail-venta.component';
 registerLocaleData(localePy, 'es');
 
 @NgModule({
   declarations: [
     ClientesComponent,
     VentaComponent,
-    BoletaVentaComponent
+    BoletaVentaComponent,
+    DetailVentaComponent
   ],
   imports: [
     CommonModule,

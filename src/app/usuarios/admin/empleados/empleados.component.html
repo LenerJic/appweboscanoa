@@ -50,7 +50,7 @@
                 <td>{{empleado.apellidoMat}}</td>
                 <td>
                     <span *ngFor="let doc of lstdocumento">
-                        {{(empleado.tipoDocumento === doc.id) ? doc.nombre : ''}}
+                        {{(doc.id === empleado.tipoDocumento) ? doc.nombre : ''}}
                     </span>
                 </td>
                 <td>{{empleado.nroDocumento}}</td>

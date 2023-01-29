@@ -36,7 +36,7 @@
               <th pSortableColumn="precioCompra">Precio Compra <p-sortIcon field="precioCompra"></p-sortIcon></th>
               <th pSortableColumn="precioVenta">Precio Venta <p-sortIcon field="precioVenta"></p-sortIcon></th>
               <th pSortableColumn="estado">Estado<p-sortIcon field="estado"></p-sortIcon></th>
-              <th pSortableColumn="fecha">Fecha<p-sortIcon field="fecha"></p-sortIcon></th>
+              <th pSortableColumn="fecha">Ultimo Registro<p-sortIcon field="fecha"></p-sortIcon></th>
               <th pSortableColumn="imagenUrl">Imagen<p-sortIcon field="imagenUrl"></p-sortIcon></th>
               <th>Acciones</th>
           </tr>
@@ -45,9 +45,9 @@
           <tr>
               <td>{{product.nombre}}</td>
               <td>
-                  <span *ngFor="let catg of lstcategorias">
-                      {{(product.categoria === catg.id) ? catg.nombre : ''}}
-                  </span>
+                <span *ngFor="let category of lstcategorias">
+                    {{(category.id === product.categoria) ? category.nombre : ''}}
+                </span>
               </td>
               <td>{{product.stock}}</td>
               <td>{{product.precioCompra | currency:'S/ '}}</td>
@@ -57,7 +57,7 @@
                 <p-tag *ngIf="(product.estado && product.stock < 10)" severity="warning" value="Bajo Stock" [rounded]="true"></p-tag>
                 <p-tag *ngIf="!product.estado" severity="danger" value="Sin Stock" [rounded]="true"></p-tag>
               </td>
-              <td>{{product.fecha | date:'dd/MM/yyyy'}}</td>
+              <td>{{product.fecha | date:'dd/MM/yyyy hh:mm a':'UTC-10'}}</td>
               <td>
                 <div *ngIf="product.imagenes[0] === null || product.imagenes.length === 0">
                     Sin Imagen

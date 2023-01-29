@@ -22,8 +22,7 @@ export class CategoriasComponent implements OnInit {
               private messageService: MessageService,
               private confirmationService: ConfirmationService,
               private exportarPdf: ExportarPdfService,
-              private fb: FormBuilder,
-              private router: Router) { }
+              private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.cargarData();
@@ -38,8 +37,7 @@ export class CategoriasComponent implements OnInit {
   cargarData(){
     this.categoriaService.getCategories().subscribe((data:any) => {
       this.categories = data.result;
-    },
-    (errorData) => this.router.navigate(['/not-found']));
+    });
   }
 
   getValue(e: any){

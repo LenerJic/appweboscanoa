@@ -2,7 +2,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from 'src/app/layout/layout.component';
 import { HomeComponent } from 'src/app/pages/home/home.component';
+import { BoletaVentaComponent } from './boleta-venta/boleta-venta.component';
 import { ClientesComponent } from './clientes/clientes.component';
+import { DetailVentaComponent } from './detail-venta/detail-venta.component';
 import { VentaComponent } from './venta/venta.component';
 
 const routes: Routes = [
@@ -14,6 +16,8 @@ const routes: Routes = [
       { path: 'home', component: HomeComponent },
       { path: 'clientes', component: ClientesComponent },
       { path: 'venta', component: VentaComponent },
+      { path: 'detail-venta', component: DetailVentaComponent },
+      { path: 'boleta/:id', component: BoletaVentaComponent },
       { path: '**', redirectTo: 'not-found', pathMatch: 'full' }
       /* {
         path: 'almacen',

@@ -21,6 +21,14 @@ export class ClienteService {
     });
     return this.http.get<ClienteI[]>(this.apiUrl, {headers: headers});
   }
+  getClient(id: number): Observable<ClienteI>{
+    let auth_token = localStorage.getItem('token_value');
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${auth_token}`
+    });
+    return this.http.get<ClienteI>(this.apiUrl + id, {headers: headers});
+  }
 
   createClient(data: any): Observable<ClienteI>{
     let auth_token = localStorage.getItem('token_value');

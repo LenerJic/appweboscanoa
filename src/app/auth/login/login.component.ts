@@ -33,14 +33,17 @@ export class LoginComponent {
           
           if (user_rol === 'administrador') {
             this.router.navigate(['/admin']);
+            this.cargando=false;
           } else if(user_rol === 'almacenero') {
             this.router.navigate(['/almacenero']);
+            this.cargando=false;
           } else if(user_rol === 'vendedor') {
             this.router.navigate(['/vendedor']);
+            this.cargando=false;
           } else {
             this.router.navigate(['/not-found']);
+            this.cargando=false;
           }
-          this.cargando=false;
         } else {
           this.messageService.add({
             severity:'error',

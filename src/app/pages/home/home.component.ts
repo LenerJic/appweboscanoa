@@ -54,12 +54,11 @@ export class HomeComponent implements OnInit {
     // Ventas - falta
     this.docService.getDocument().subscribe((data:any)=>{
       this.lstdocumento = data.result;
-    });
-    this.empleadoService.getEmpleado(this.idUser).subscribe((data:any)=>{
-      this.datoEmpleado = data.result;
-      this.tipoDocumento = this.lstdocumento?.find((tipo:any)=>tipo.id === this.datoEmpleado.tipoDocumento)?.nombre ?? 'Documento:';
-      this.valorUsuario = data.result.nroDocumento;
-      
+      this.empleadoService.getEmpleado(this.idUser).subscribe((dat:any)=>{
+        this.datoEmpleado = dat.result;
+        this.tipoDocumento = this.lstdocumento?.find((tipo:any)=>tipo.id === this.datoEmpleado.tipoDocumento)?.nombre+':' ?? 'Documento:';
+        this.valorUsuario = dat.result.nroDocumento;
+      });
     });
     
     this.PasswordForm = this.fb.group({

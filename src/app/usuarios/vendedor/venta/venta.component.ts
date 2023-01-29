@@ -1,8 +1,8 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { retry } from 'rxjs';
 import { ClienteI } from 'src/app/interfaces/ClienteInterface';
 import { ProductImgI } from 'src/app/interfaces/ProductInterface';
 import { DetalleVentaI, VentaI } from 'src/app/interfaces/VentaInterface';
@@ -288,55 +288,58 @@ export class VentaComponent implements OnInit, OnDestroy{
     });
     try {
       // Create Sale
-      this.ventaService.createVenta(this.ventaForm.value).subscribe(data=>{},(e)=>{
-        console.log(e);
-      })
-      let ventaId = this.ventaForm.value.numeroBoleta;
-      // Sale x Sale
-      for(let pedido of this.tablaproducto){
-        this.detalleVentaForm = this.fb.group({
-          id: [0],
-          idVenta: [ventaId],
-          idMueble: [pedido.idProducto],
-          cantidad: [pedido.cantidad],
-          subtotal: [pedido.pTotal]
+      this.btnGuardar = true;
+      this.btnAnular = true;
+      this.ventaService.createVenta(this.ventaForm.value).subscribe((data:any)=>{
+        let ventaId = data.result.id;
+        // Sale x Sale
+        for(let pedido of this.tablaproducto){
+          this.detalleVentaForm = this.fb.group({
+            id: [0],
+            idVenta: [ventaId],
+            idMueble: [pedido.idProducto],
+            cantidad: [pedido.cantidad],
+            subtotal: [pedido.pTotal]
+          });
+          this.detalleventaService.createDetalleVenta(this.detalleVentaForm.value).subscribe((data:any)=>{
+            this.detalleVentaForm.reset();
+          },
+          (e)=>{
+            console.log(e);
+            this.detalleVentaForm.reset();
+            this.messageService.add({
+              severity:'error', summary: 'Error',
+              detail: 'No se pudo completar la acción', life: 3000
+            });
+          });
+        };
+        // Update Sale
+        this.ventaForm = this.fb.group({
+          id: [ventaId],
+          idCliente: [_idCliente],
+          idEmpleado: [this.idEmpleado],
+          numeroBoleta: [ventaId],
+          montopago: [this.sumaTotal],
+          fecha: [new Date()],
         });
-        console.log(this.detalleVentaForm.value);
-        this.detalleventaService.createDetalleVenta(this.detalleVentaForm.value).subscribe((data:any)=>{
-          this.detalleVentaForm.reset();
+        this.ventaService.updateVenta(ventaId,this.ventaForm.value).subscribe((data:any)=>{
+          this.messageService.add({
+            severity:'success', summary: 'Éxito!',
+            detail: 'Se guardaron los datos de la venta', life: 3000
+          });
         },
         (e)=>{
           console.log(e);
-          this.detalleVentaForm.reset();
           this.messageService.add({
             severity:'error', summary: 'Error',
-            detail: 'No se pudo completar la acción', life: 3000
+            detail: 'No se pudo guardar la venta', life: 3000
           });
         });
-      }
-      // Update Sale
-      this.ventaForm = this.fb.group({
-        id: [ventaId],
-        idCliente: [_idCliente],
-        idEmpleado: [this.idEmpleado],
-        numeroBoleta: [ventaId],
-        montopago: [this.sumaTotal],
-        fecha: [new Date()],
-      });
-      this.ventaService.updateVenta(ventaId,this.ventaForm.value).subscribe((data:any)=>{
-        this.messageService.add({
-          severity:'success', summary: 'Éxito!',
-          detail: 'Se guardaron los datos de la venta', life: 3000
-        });
+        this.anularOption();
       },
       (e)=>{
         console.log(e);
-        this.messageService.add({
-          severity:'error', summary: 'Error',
-          detail: 'No se pudo guardar la venta', life: 3000
-        });
-      });
-      this.anularOption();
+      })
     } catch (error) {
       console.log(error);
       this.anularOption();
@@ -366,25 +369,5 @@ export class VentaComponent implements OnInit, OnDestroy{
     if (this.ref) {
         this.ref.close();
     }else{ }
-  }
-
-  rellenarCeros(valor, ancho){
-    let numberOutput = Math.abs(valor);
-    let length_number = valor.toString().length;
-    let zero = '0';
-
-    if( ancho <= length_number ) {
-      if ( valor < 0 ) {
-        return ('-' + numberOutput.toString());
-      } else {
-        return numberOutput.toString();
-      }
-    } else {
-      if ( valor < 0 ) {
-        return ('-' + (zero.repeat(ancho - length_number)) + numberOutput.toString());
-      } else {
-        return ((zero.repeat(ancho - length_number)) + numberOutput.toString());
-      }
-    }
   }
 }
