@@ -17,7 +17,7 @@ export class ExportarPdfService {
 
     const doc = new jsPDF();
 
-    doc.text(titulo, doc.internal.pageSize.width/2, 8, {align: 'center'});
+    doc.text(titulo, doc.internal.pageSize.width/2, 5, {align: 'center'});
     autoTable(doc, {
       head: [encabezado],
       body: cuerpo,

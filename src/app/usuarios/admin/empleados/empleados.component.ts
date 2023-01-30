@@ -15,6 +15,7 @@ import { ExportarPdfService } from 'src/app/services/exportar-pdf.service';
   styleUrls: ['./empleados.component.scss']
 })
 export class EmpleadosComponent implements OnInit{
+  pipe = new DatePipe('es-PE');
   empleadoDialog: boolean;
   lstdocumento: Tipo_Doc[] = [];
   empleados: EmpleadoI[];
@@ -30,8 +31,7 @@ export class EmpleadosComponent implements OnInit{
               private messageService: MessageService,
               private confirmationService: ConfirmationService,
               private exportarPdf: ExportarPdfService,
-              private fb: FormBuilder,
-              private pd: DatePipe) { }
+              private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.roles = [
@@ -63,7 +63,7 @@ export class EmpleadosComponent implements OnInit{
     });
   }
 
-//* #region getNamesForm
+//#region getNamesForm
   get nombres() { return this.empleadoForm.get('nombres'); }
   get apellidoPat() { return this.empleadoForm.get('apellidoPat'); }
   get apellidoMat() { return this.empleadoForm.get('apellidoMat'); }
@@ -75,7 +75,7 @@ export class EmpleadosComponent implements OnInit{
   get fechaNacimiento() { return this.empleadoForm.get('fechaNacimiento'); }
   get estado() { return this.empleadoForm.get('estado'); }
   get tipoEmpleado() { return this.empleadoForm.get('tipoEmpleado'); }
-//* #endregion
+//#endregion
 
   cargarData(){
     this.empleadoService.getEmpleados().subscribe((data: any) => {
@@ -220,7 +220,7 @@ export class EmpleadosComponent implements OnInit{
   }
   validarFecha(form: FormGroup){
     let date_fecha = form.value.fechaNacimiento;
-    let valid_date = this.pd.transform(date_fecha, 'yyyy-MM-dd');
+    let valid_date = this.pipe.transform(date_fecha, 'yyyy-MM-dd');
     form.value.fechaNacimiento = valid_date;
   }
 
@@ -239,24 +239,20 @@ export class EmpleadosComponent implements OnInit{
   }
 
   exportPdf() {
-    const titulo = "Lista de Categorias";
-    const encabezado = ["Id", "Nombre"];
+    let fechaHoy = this.pipe.transform(new Date(), 'dd/MM/yyyy hh:mm a','UTC-5');
+    const titulo = `Lista de Empleados \n ${fechaHoy}`,
+          encabezado = ["Nombres", "Apellidos", "Tipo de Doc.", "Num. de Doc.", "Celular", "Fec. de Nacimiento", "Cargo"];
 
     this.empleadoService.getEmpleados().subscribe((data:any)=>{
       const cuerpo = Object(data.result).map(
         (obj:any)=>{
           const datos = [
-            obj.id,
             obj.nombres,
-            obj.apellidoPat,
-            obj.apellidoMat,
-            obj.tipoDocumento,
+            obj.apellidoPat + ' ' + obj.apellidoMat,
+            this.lstdocumento.find((doc:any)=>doc.id === obj.tipoDocumento)?.nombre ?? '',
             obj.nroDocumento,
-            obj.direccion,
-            obj.correo,
             obj.celular,
-            obj.fechaNacimiento = this.pd.transform(obj.fecha, 'dd/MM/yyyy'),
-            obj.estado,
+            obj.fechaNacimiento = this.pipe.transform(obj.fechaNacimiento, 'dd/MM/yyyy'),
             obj.tipoEmpleado
           ]
           return datos;

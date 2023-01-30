@@ -5,9 +5,11 @@ import { MessageService } from 'primeng/api';
 import { EmpleadoI } from 'src/app/interfaces/EmpleadoInterface';
 import { Tipo_Doc } from 'src/app/interfaces/Tipo_Doc';
 import { AuthService } from 'src/app/services/auth.service';
+import { CategoriaService } from 'src/app/services/categoria.service';
 import { ClienteService } from 'src/app/services/cliente.service';
 import { DocumentoService } from 'src/app/services/documento.service';
 import { EmpleadoService } from 'src/app/services/empleado.service';
+import { ExportarPdfService } from 'src/app/services/exportar-pdf.service';
 import { ProductoService } from 'src/app/services/producto.service';
 import { VentaService } from 'src/app/services/venta.service';
 
@@ -23,11 +25,16 @@ export class HomeComponent implements OnInit {
   totalUsers: number = 0;
   totalClientes: number = 0;
   totalProductos: number = 0;
+  lowStockProducts: number = 0;
+  outofStockProducts: number = 0;
   totalVentas: number = 0;
   totalVentasHoy: number = 0;
   idUser: number = 0;
   datoEmpleado: EmpleadoI;
   lstdocumento: Tipo_Doc[] = [];
+  lstcategorias: any[] = [];
+  lstlowStock: any[] = [];
+  lstoutofStock: any[] = [];
   tipoDocumento: string;
 
   PasswordForm: FormGroup;
@@ -36,15 +43,18 @@ export class HomeComponent implements OnInit {
   deshabilitar: boolean = false;
   icon_lock: boolean = false;
 
-  constructor (private empleadoService: EmpleadoService,
-               private clienteService: ClienteService,
-               private productosService: ProductoService,
-               private ventasService: VentaService,
-               private authService: AuthService,
-               private docService: DocumentoService,
-               private messageService: MessageService,
-               private fb: FormBuilder
-               ) { }
+  constructor (
+    private empleadoService: EmpleadoService,
+    private clienteService: ClienteService,
+    private categoriaService: CategoriaService,
+    private productosService: ProductoService,
+    private ventasService: VentaService,
+    private authService: AuthService,
+    private docService: DocumentoService,
+    private messageService: MessageService,
+    private exportPdf: ExportarPdfService,
+    private fb: FormBuilder
+  ) { }
   
   ngOnInit() {
     this.idUser = parseInt(this.authService.getUserid);
@@ -55,15 +65,27 @@ export class HomeComponent implements OnInit {
     this.clienteService.getClients().subscribe((data:any)=>{
       this.totalClientes = data.result.length;
     });
+    this.categoriaService.getCategories().subscribe((data:any)=>{
+      this.lstcategorias = data.result;
+    });
     this.productosService.getProducts().subscribe((data:any)=>{
       this.totalProductos = data.result.length;
+      for (const product of data.result) {
+        if (product.stock < 10 && product.estado) {
+          ++this.lowStockProducts;
+          this.lstlowStock.push(product);
+        } else if (!product.estado) {
+          ++this.outofStockProducts;
+          this.lstoutofStock.push(product)
+        }
+      }
     });
     this.ventasService.getVentas().subscribe((data:any)=>{
       this.totalVentas = data.result.length;
       for (const venta of data.result) {
         let fechaVenta = this.pipe.transform(venta.fecha, 'dd/MM/yyyy'),
             fechaHoy = this.pipe.transform(new Date(), 'dd/MM/yyyy');
-        if (fechaVenta == fechaHoy) {
+        if (fechaVenta === fechaHoy) {
           ++this.totalVentasHoy;
         }
       }
@@ -113,6 +135,12 @@ export class HomeComponent implements OnInit {
       return false;
     }
   }
+  lowStockExport(){
+    this.convertpdf('Productos con Bajo Stock', this.lstlowStock);
+  }
+  outofStockExport(){
+    this.convertpdf('Productos Sin Stock', this.lstoutofStock);
+  }
   clickEvent(){
     this.icon_lock = !this.icon_lock;
     if(this.deshabilitar){
@@ -120,5 +148,32 @@ export class HomeComponent implements OnInit {
     }else{
       this.deshabilitar = true;
     };
+  }
+  convertpdf(title: string, datos:any){
+    let fechaHoy = this.pipe.transform(new Date(), 'dd/MM/yyyy hh:mm a','UTC-5');
+    const titulo = `${title} \n ${fechaHoy}`,
+      encabezado = ["COD", "Nombres", "Categoria", "Stock", "P. Compra", "P. Venta", "Ultimo Registro", "Estado"],
+      numberFormat = new Intl.NumberFormat('es-PE',{
+        style: 'currency',
+        currency: 'PEN',
+      });
+    const cuerpo = Object(datos).map(
+      (obj:any)=>{
+        const datos = [
+          obj.id,
+          obj.nombre,
+          this.lstcategorias.find((categoria:any)=>categoria.id === obj.categoria)?.nombre ?? 'Categoria no registrado',
+          obj.stock,
+          numberFormat.format(obj.precioCompra),
+          numberFormat.format(obj.precioVenta),
+          obj.fecha = this.pipe.transform(obj.fecha, 'dd/MM/yyyy'),
+          (obj.estado && obj.stock >= 10) ? 'Con Stock' :
+          (obj.estado && obj.stock < 10) ? 'Bajo Stock' :
+          (!obj.estado) ? 'Sin Stock' : ''
+        ]
+        return datos;
+      }
+    )
+    this.exportPdf.imprimir(encabezado, cuerpo, titulo, true);
   }
 }

@@ -14,6 +14,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { CalendarModule } from 'primeng/calendar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { PanelModule } from 'primeng/panel';
@@ -29,6 +30,7 @@ import localePy from '@angular/common/locales/es-PE';
 import { VentaComponent } from './venta/venta.component';
 import { BoletaVentaComponent } from './boleta-venta/boleta-venta.component';
 import { DetailVentaComponent } from './detail-venta/detail-venta.component';
+import { ReportSaleComponent } from './report-sale/report-sale.component';
 registerLocaleData(localePy, 'es');
 
 @NgModule({
@@ -36,7 +38,8 @@ registerLocaleData(localePy, 'es');
     ClientesComponent,
     VentaComponent,
     BoletaVentaComponent,
-    DetailVentaComponent
+    DetailVentaComponent,
+    ReportSaleComponent
   ],
   imports: [
     CommonModule,
@@ -53,6 +56,7 @@ registerLocaleData(localePy, 'es');
     TableModule,
     DialogModule,
     ConfirmDialogModule,
+    CalendarModule,
     ProgressSpinnerModule,
     AutoCompleteModule,
     PanelModule,

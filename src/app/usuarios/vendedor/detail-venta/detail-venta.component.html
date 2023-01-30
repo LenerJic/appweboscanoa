@@ -1,6 +1,6 @@
 <p-toast></p-toast>
 <div class="container-fluid px-4">
-  <h1 class="mt-4">Registro de Ventas</h1>
+  <h1 class="mt-4">Ventas Realizadas Hoy</h1>
   <div class="col-12">
     <div class="card">
       <!--TODO    TABLA -->
@@ -31,7 +31,7 @@
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-detail>
-            <tr>
+            <tr *ngIf="today === pipeDate.transform(detail.fecha, 'dd/MM/yyyy')">
                 <td class="text-right">{{rellenarCeros(detail.numeroBoleta,6)}}</td>
                 <td>
                     <span *ngFor="let emp of lstEmpleados">

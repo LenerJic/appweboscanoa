@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -5,6 +6,7 @@ import { ClienteI } from 'src/app/interfaces/ClienteInterface';
 import { Tipo_Doc } from 'src/app/interfaces/Tipo_Doc';
 import { ClienteService } from 'src/app/services/cliente.service';
 import { DocumentoService } from 'src/app/services/documento.service';
+import { ExportarPdfService } from 'src/app/services/exportar-pdf.service';
 
 @Component({
   selector: 'app-clientes',
@@ -12,6 +14,7 @@ import { DocumentoService } from 'src/app/services/documento.service';
   styleUrls: ['./clientes.component.scss']
 })
 export class ClientesComponent implements OnInit {
+  pipe = new DatePipe('es-PE');
   clientDialog: boolean;
   lstdocumento: Tipo_Doc[] = [];
   clients: ClienteI[];
@@ -23,6 +26,7 @@ export class ClientesComponent implements OnInit {
               private documentservice: DocumentoService,
               private messageService: MessageService,
               private confirmationService: ConfirmationService,
+              private exportarPdf: ExportarPdfService,
               private fb: FormBuilder) { }
 
   ngOnInit(): void {
@@ -178,6 +182,26 @@ export class ClientesComponent implements OnInit {
     });
   }
   exportPdf(){
+    let fechaHoy = this.pipe.transform(new Date(), 'dd/MM/yyyy hh:mm a','UTC-5');
+    const titulo = `Lista de Clientes \n ${fechaHoy}`,
+          encabezado = ["Nombres", "Ap. Paterno", "Ap. Materno", "Tipo de Doc.", "Num. de Doc.", "Correo", "Celular"];
 
+    this.clienteservice.getClients().subscribe((data:any)=>{
+      const cuerpo = Object(data.result).map(
+        (obj:any)=>{
+          const datos = [
+            obj.nombres,
+            obj.apellidoPat,
+            obj.apellidoMat,
+            this.lstdocumento.find((doc:any)=>doc.id === obj.tipoDocumento)?.nombre ?? '',
+            obj.nroDocumento,
+            obj.correo,
+            obj.celular,
+          ]
+          return datos;
+        }
+      )
+      this.exportarPdf.imprimir(encabezado, cuerpo, titulo, true);
+    });
   }
 }

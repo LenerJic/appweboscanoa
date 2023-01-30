@@ -1,7 +1,7 @@
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ConfirmationService, MessageService, PrimeNGConfig } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { CategoryI } from 'src/app/interfaces/CategoryInterface';
 import { ProductI, ProductImgI } from 'src/app/interfaces/ProductInterface';
 import { CategoriaService } from 'src/app/services/categoria.service';
@@ -11,7 +11,7 @@ import { ProductoService } from 'src/app/services/producto.service';
 @Component({
   selector: 'app-productos',
   templateUrl: './productos.component.html',
-  styleUrls: ['./productos.component.scss']
+  styleUrls: ['./productos.component.scss'],
 })
 export class ProductosComponent implements OnInit {
 
@@ -189,9 +189,13 @@ export class ProductosComponent implements OnInit {
   }
 
   exportPdf() {
-    const titulo = "Lista de Productos";
-    const encabezado = ["COD", "Nombre", "Categoria", "Stock", "Precio de Compra", "Precio de Venta", "Ultimo Registro", "Estado"];
-
+    let fechaHoy = this.pd.transform(new Date(), 'dd/MM/yyyy hh:mm a','UTC-5');
+    const titulo = `Lista de Productos \n ${fechaHoy}`,
+      encabezado = ["COD", "Nombres", "Categoria", "Stock", "P. Compra", "P. Venta", "Ultimo Registro", "Estado"],
+      numberFormat = new Intl.NumberFormat('es-PE',{
+        style: 'currency',
+        currency: 'PEN',
+      });
     this.productoService.getProducts().subscribe((data:any)=>{
       const cuerpo = Object(data.result).map(
         (obj:any)=>{
@@ -200,10 +204,12 @@ export class ProductosComponent implements OnInit {
             obj.nombre,
             this.lstcategorias.find((categoria:any)=>categoria.id === obj.categoria)?.nombre ?? 'Categoria no registrado',
             obj.stock,
-            obj.precioCompra,
-            obj.precioVenta,
+            numberFormat.format(obj.precioCompra),
+            numberFormat.format(obj.precioVenta),
             obj.fecha = this.pd.transform(obj.fecha, 'dd/MM/yyyy'),
-            (obj.estado) ? 'Con Stock' : 'Sin Stock'
+            (obj.estado && obj.stock >= 10) ? 'Con Stock' :
+            (obj.estado && obj.stock < 10) ? 'Bajo Stock' :
+            (!obj.estado) ? 'Sin Stock' : ''
           ]
           return datos;
         }

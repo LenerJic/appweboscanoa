@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -21,15 +22,14 @@ export class DetailVentaComponent {
   lstClientes: any;
   lstEmpleados: any;
 
+  pipeDate = new DatePipe('es-PE');
+  today = this.pipeDate.transform(new Date(), 'dd/MM/yyyy');
+
   constructor(
     private ventaService: VentaService,
-    private detalleService: DetalleVentaService,
     private clienteService: ClienteService,
-    private empleadoService: EmpleadoService,
-    private messageService: MessageService,
-    private confirmationService: ConfirmationService,
-    private exportarPdf: ExportarPdfService,
-    private fb: FormBuilder) { }
+    private empleadoService: EmpleadoService
+  ) { }
 
   ngOnInit(): void {
     this.empleadoService.getEmpleados().subscribe((data:any)=>{

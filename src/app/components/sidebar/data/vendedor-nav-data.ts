@@ -11,7 +11,12 @@ export const navbarVendedor = [
     },
     {
         routerLink: 'detail-venta',
-        icon: 'pi pi-book',
+        icon: 'pi pi-info-circle',
         label: 'Detalle de Ventas'
+    },
+    {
+        routerLink: 'reportofsale',
+        icon: 'pi pi-book',
+        label: 'Informe de Ventas'
     }
 ];

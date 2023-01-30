@@ -51,13 +51,43 @@
             <div class="surface-card shadow-2 p-3 border-round border-left-3 border-green-400">
                 <div class="flex justify-content-between">
                     <div>
-                        <a [routerLink]="['../venta']" class="no-underline hover:underline text-green-400">
+                        <a [routerLink]="['../detail-venta']" class="no-underline hover:underline text-green-400">
                             <span class="block text-500 font-medium mb-3">Ventas realizadas hoy</span>
                             <div class="text-900 font-medium text-xl">{{totalVentasHoy}}</div>
                         </a>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width:2.5rem;height:2.5rem">
                         <i class="pi pi-dollar text-green-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="lowStockProducts" class="col-12 md:col-6 lg:col-3">
+            <div class="bg-yellow-50 shadow-2 p-3 border-round border-left-3 border-yellow-400">
+                <div class="flex justify-content-between">
+                    <div>
+                        <div class="cursor-pointer hover:underline text-yellow-400" (click)="lowStockExport()">
+                            <span class="block text-500 font-medium mb-3">Productos con bajo stock</span>
+                            <div class="text-900 font-medium text-xl">{{lowStockProducts}}</div>
+                        </div>
+                    </div>
+                    <div class="flex align-items-center justify-content-center bg-yellow-100 border-round" style="width:2.5rem;height:2.5rem">
+                        <i class="pi pi-exclamation-triangle text-yellow-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="outofStockProducts" class="col-12 md:col-6 lg:col-3">
+            <div class="bg-red-50 shadow-2 p-3 border-round border-left-3 border-red-400">
+                <div class="flex justify-content-between">
+                    <div>
+                        <div class="cursor-pointer hover:underline text-red-400" (click)="outofStockExport()">
+                            <span class="block text-500 font-medium mb-3">Productos sin stock</span>
+                            <div class="text-900 font-medium text-xl">{{outofStockProducts}}</div>
+                        </div>
+                    </div>
+                    <div class="flex align-items-center justify-content-center bg-red-100 border-round" style="width:2.5rem;height:2.5rem">
+                        <i class="pi pi-exclamation-circle text-red-500 text-xl"></i>
                     </div>
                 </div>
             </div>

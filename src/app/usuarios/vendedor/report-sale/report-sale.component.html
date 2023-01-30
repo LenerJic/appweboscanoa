@@ -1,0 +1,78 @@
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Registro de Ventas</h1>
+    <div class="col-12">
+      <div class="card">
+        <p-toolbar class="mb-4">
+          <div class="p-toolbar-group-start">
+              <form>
+                <label>Desde:&nbsp;</label>
+                <p-calendar [showIcon]="true" inputId="icon" class="mr-2"
+                [(ngModel)]="fecha1" [minDate]="minDate" [maxDate]="maxDate"></p-calendar>
+                <label>Hasta:&nbsp;</label>
+                <p-calendar [showIcon]="true" inputId="icon"
+                [(ngModel)]="fecha2" [minDate]="fecha1" [maxDate]="maxDate"></p-calendar>
+              </form>
+          </div>
+      
+          <div class="p-toolbar-group-end">
+              <p-button label="PDF" icon="pi pi-file-pdf" styleClass="p-button-danger mr-2"
+               [disabled]="btn_pdf" (onClick)="convertPdf()"></p-button>
+              <p-button icon="pi pi-search" (onClick)="filterDate()"></p-button>
+          </div>
+        </p-toolbar>
+        <!--TODO    TABLA -->
+        <p-table #dt [value]="lstSale" [rows]="10" [paginator]="true" [resizableColumns]="true"
+          styleClass="p-datatable-gridlines"
+          [rowHover]="true" dataKey="id" [scrollable]="true" [showCurrentPageReport]="true"
+          currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} elementos"
+          *ngIf="lstSale; else table_error">
+          <ng-template pTemplate="header">
+              <tr>
+                  <th pSortableColumn="numeroBoleta" class="w-2rem">Num. Boleta<p-sortIcon field="numeroBoleta"></p-sortIcon></th>
+                  <th pSortableColumn="idEmpleado">Vendedor<p-sortIcon field="idEmpleado"></p-sortIcon></th>
+                  <th pSortableColumn="idCliente">Cliente<p-sortIcon field="idCliente"></p-sortIcon></th>
+                  <th pSortableColumn="c_documento" class="w-5rem">Doc. del Cliente<p-sortIcon field="c_documento"></p-sortIcon></th>
+                  <th pSortableColumn="montoPago" class="w-4rem">Monto Total<p-sortIcon field="montoPago"></p-sortIcon></th>
+                  <th pSortableColumn="fecha" class="w-4rem">Fecha y Hora<p-sortIcon field="fecha"></p-sortIcon></th>
+                  <th>Acciones</th>
+              </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-detail>
+              <tr>
+                  <td class="text-right">{{rellenarCeros(detail.numeroBoleta,6)}}</td>
+                  <td>
+                      <span *ngFor="let emp of lstEmpleados">
+                          {{(emp.id === detail.idEmpleado) ? emp.nombres : ''}}
+                      </span>
+                  </td>
+                  <td>
+                      <span *ngFor="let cli of lstClientes">
+                          {{(cli.id === detail.idCliente) ? cli.nombres : ''}}
+                      </span>
+                  </td>
+                  <td>
+                      <span *ngFor="let cli of lstClientes">
+                          {{(cli.id === detail.idCliente) ? cli.nroDocumento : ''}}
+                      </span>
+                  </td>
+                  <td class="text-right">{{detail.montoPago | currency: 'S/ '}}</td>
+                  <td>{{detail.fecha | date: 'dd/MM/yyyy hh:mm a':'UTC-10'}}</td>
+                  <td>
+                  <button pButton pRipple icon="pi pi-info-circle" class="p-button-rounded p-button-success mr-2"
+                  [routerLink]="['..','boleta',detail.id]"></button>
+                  </td>
+              </tr>
+          </ng-template>
+          <ng-template pTemplate="summary">
+              <div class="flex align-items-center justify-content-between">
+                  En total se hicieron {{lstVentas ? lstVentas.length : 0 }} ventas.
+              </div>
+          </ng-template>
+        </p-table>
+        <ng-template #table_error>
+          <p-progressSpinner class="d-flex justify-content-center align-items-center mt-5"></p-progressSpinner>
+        </ng-template>
+        <!--TODO    END TABLA -->
+      </div>
+    </div>
+  </div>
