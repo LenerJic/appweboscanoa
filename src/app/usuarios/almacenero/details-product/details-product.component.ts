@@ -23,6 +23,7 @@ export class DetailsProductComponent implements OnInit {
   dataimagen: boolean;
   btnTrash: boolean = false;
   lstimagen: [] = [];
+  _id_global: number;
 
   constructor(
     private route: ActivatedRoute,
@@ -37,6 +38,7 @@ export class DetailsProductComponent implements OnInit {
     this.route.paramMap.subscribe((paramMap: any) =>{
       const {params} = paramMap;
       if (params.id !== undefined) {
+        this._id_global = parseInt(params.id);
         this.categoriasService.getCategories().subscribe((data:any)=>{
           this.lstcategorias = data.result;
           this.productoService.getProduct(parseInt(params.id)).subscribe((data:any)=>{
@@ -92,6 +94,10 @@ export class DetailsProductComponent implements OnInit {
         console.log(data);
         this.messageService.add({severity: 'success', summary: 'Accion Completada con Éxito!!', detail: 'Imagen(es) Guardado(s)'});
         formData.delete('image');
+        this.imagenService.getImage(this._id_global).subscribe((data:any)=>{
+          this.lstimagen = data.result;
+          this.btnTrash = false;
+        });
       },
       e=>{
         this.messageService.add({severity: 'error', summary: 'La accion no se pudo completar', detail: e});
@@ -126,10 +132,10 @@ export class DetailsProductComponent implements OnInit {
       accept: () => {
         this.imagenService.deleteImage(_id).subscribe((data:any)=>{
           this.messageService.add({severity: 'success', summary: 'Accion Completada con Éxito!!', detail: 'Se eliminó la Imagen'});
-          this.imagenService.getImage(this.idproducto).subscribe((data:any)=>{
+          this.imagenService.getImage(this._id_global).subscribe((data:any)=>{
             this.lstimagen = data.result;
             this.btnTrash = false;
-          })
+          });
         },
         e=>{
           this.messageService.add({severity: 'error', summary: 'La accion no se pudo completar', detail: e});
