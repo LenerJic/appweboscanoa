@@ -64,8 +64,8 @@
       </div>
     </div>
     <div class="sb-sidenav-footer" *ngIf="auth.isAutenticado">
-      <div class="small">Bienvenido:</div>
-      {{ auth.getUsername }}
+      <div class="small">Bienvenido: {{ auth.getUsername }}</div>
+      Rol: {{ auth.rolUser }}
     </div>
   </nav>
 </div>
