@@ -23,7 +23,7 @@ export class DetailVentaComponent {
   lstEmpleados: any;
 
   pipeDate = new DatePipe('es-PE');
-  today = this.pipeDate.transform(new Date(), 'dd/MM/yyyy');
+  // today = this.pipeDate.transform(new Date(), 'dd/MM/yyyy');
 
   constructor(
     private ventaService: VentaService,

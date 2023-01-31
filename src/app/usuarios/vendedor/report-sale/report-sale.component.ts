@@ -41,7 +41,6 @@ export class ReportSaleComponent implements OnInit {
 
   ngOnInit(): void {
     this.minDate = new Date('2000-01-01');
-    this.maxDate = new Date();
     this.empleadoService.getEmpleados().subscribe((data:any)=>{
       this.lstEmpleados = data.result;
       // this.cargarData();

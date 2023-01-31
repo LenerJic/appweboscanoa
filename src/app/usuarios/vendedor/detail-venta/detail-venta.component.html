@@ -31,7 +31,7 @@
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-detail>
-            <tr *ngIf="today === pipeDate.transform(detail.fecha, 'dd/MM/yyyy')">
+            <tr *ngIf="detailsSales">
                 <td class="text-right">{{rellenarCeros(detail.numeroBoleta,6)}}</td>
                 <td>
                     <span *ngFor="let emp of lstEmpleados">
