@@ -206,7 +206,7 @@ export class ProductosComponent implements OnInit {
             obj.stock,
             numberFormat.format(obj.precioCompra),
             numberFormat.format(obj.precioVenta),
-            obj.fecha = this.pd.transform(obj.fecha, 'dd/MM/yyyy'),
+            obj.fecha = this.pd.transform(obj.fecha, 'dd/MM/yyyy hh:mm a', 'UTC-10'),
             (obj.estado && obj.stock >= 10) ? 'Con Stock' :
             (obj.estado && obj.stock < 10) ? 'Bajo Stock' :
             (!obj.estado) ? 'Sin Stock' : ''

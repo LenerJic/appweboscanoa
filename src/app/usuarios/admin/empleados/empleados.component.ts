@@ -252,7 +252,7 @@ export class EmpleadosComponent implements OnInit{
             this.lstdocumento.find((doc:any)=>doc.id === obj.tipoDocumento)?.nombre ?? '',
             obj.nroDocumento,
             obj.celular,
-            obj.fechaNacimiento = this.pipe.transform(obj.fechaNacimiento, 'dd/MM/yyyy'),
+            obj.fechaNacimiento = this.pipe.transform(obj.fechaNacimiento, 'dd/MM/yyyy', 'UTC-10'),
             obj.tipoEmpleado
           ]
           return datos;

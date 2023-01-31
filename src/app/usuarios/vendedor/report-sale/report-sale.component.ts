@@ -150,7 +150,7 @@ export class ReportSaleComponent implements OnInit {
           this.lstProductos.find((prod:any)=>prod.id === obj.producto)?.nombre ?? '',
           obj.cantidad,
           numberFormat.format(obj.monto),
-          obj.fecha = this.pipeDate.transform(obj.fecha, 'dd/MM/yyyy')
+          this.pipeDate.transform(obj.fecha, 'dd/MM/yyyy hh:mm a', 'UTC-10')
         ]
         return datos;
       }
