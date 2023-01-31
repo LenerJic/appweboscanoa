@@ -83,13 +83,15 @@ export class HomeComponent implements OnInit {
     this.ventasService.getVentas().subscribe((data:any)=>{
       this.totalVentas = data.result.length;
       for (const venta of data.result) {
-        let fechaVenta = this.pipe.transform(venta.fecha, 'dd/MM/yyyy'),
+        let fechaVenta = this.pipe.transform(venta.fecha, 'dd/MM/yyyy','UTC-10'),
             fechaHoy = this.pipe.transform(new Date(), 'dd/MM/yyyy');
         if (fechaVenta === fechaHoy) {
           ++this.totalVentasHoy;
         }
       }
     });
+    // console.log(new Date());
+    
     // Ventas - falta
     this.docService.getDocument().subscribe((data:any)=>{
       this.lstdocumento = data.result;

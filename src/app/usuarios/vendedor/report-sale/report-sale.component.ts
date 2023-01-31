@@ -26,8 +26,8 @@ export class ReportSaleComponent implements OnInit {
   minDate: Date;
   maxDate: Date;
   fechamax: Date;
-  fecha1: Date;
-  fecha2: Date;
+  fecha1: Date = new Date();
+  fecha2: Date = new Date();
   btn_pdf: boolean = true;
   
   constructor(
@@ -68,7 +68,7 @@ export class ReportSaleComponent implements OnInit {
     let initDate = this.pipeDate.transform(this.fecha1, 'dd/MM/yyyy');
     let endDate = this.pipeDate.transform(this.fecha2, 'dd/MM/yyyy');
     for (const venta of this.lstVentas) {
-      let filt = this.pipeDate.transform(venta.fecha, 'dd/MM/yyyy')
+      let filt = this.pipeDate.transform(venta.fecha, 'dd/MM/yyyy', 'UTC-10')
       if (filt >= initDate && filt <= endDate) {
         this.lstSale.push(venta);
       }

@@ -31,7 +31,7 @@
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-detail>
-            <tr *ngIf="detailsSales">
+            <tr *ngIf="today === pipeDate.transform(detail.fecha, 'dd/MM/yyyy', 'UTC-10')">
                 <td class="text-right">{{rellenarCeros(detail.numeroBoleta,6)}}</td>
                 <td>
                     <span *ngFor="let emp of lstEmpleados">
@@ -55,11 +55,6 @@
                  [routerLink]="['..','boleta',detail.id]"></button>
                 </td>
             </tr>
-        </ng-template>
-        <ng-template pTemplate="summary">
-            <div class="flex align-items-center justify-content-between">
-                En total se hicieron {{detailsSales ? detailsSales.length : 0 }} ventas.
-            </div>
         </ng-template>
       </p-table>
       <ng-template #table_error>
